@@ -115,80 +115,153 @@ const generateVerificationEmailHTML = (verificationCode: string) => {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Email Verification Code</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSPRANO Email Verification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            padding: 40px 20px;
+            color: #24292f;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+        
+        .insprano-logo {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 24px;
+            fill: #24292f;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #24292f;
+            line-height: 1.5;
+        }
+        
+        .content {
+            padding: 0 40px 40px;
+        }
+        
+        .code-box {
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .code-label {
+            font-size: 14px;
+            color: #57606a;
+            margin-bottom: 16px;
+        }
+        
+        .verification-code {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            color: #24292f;
+            text-align: center;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .info-text {
+            font-size: 14px;
+            color: #57606a;
+            line-height: 1.6;
+            margin: 16px 0;
+        }
+        
+        .warning {
+            font-weight: 600;
+            color: #24292f;
+        }
+        
+        .signature {
+            margin-top: 24px;
+        }
+        
+        .signature p {
+            font-size: 14px;
+            color: #57606a;
+            line-height: 1.6;
+        }
+        
+        .disclaimer {
+            padding: 24px 40px;
+            background-color: #f6f8fa;
+            border-top: 1px solid #d0d7de;
+            font-size: 12px;
+            color: #57606a;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #57606a;
+        }
+        
+        .footer-divider {
+            margin: 0 4px;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; color: #333333;">
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="padding: 50px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden;">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, #232325 0%, #8660c7 100%); padding: 48px 40px 36px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #ffffff; letter-spacing: -0.4px;">Email Verification</h1>
-              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 15px;">Secure your account in seconds</p>
-            </td>
-          </tr>
-
-          <!-- Content -->
-          <tr>
-            <td style="padding: 50px 40px 40px;">
-              <p style="margin: 0 0 24px; font-size: 16px;">Hello,</p>
-              <p style="margin: 0 0 32px; font-size: 16px; line-height: 1.6; color: #444444;">
-                We received a request to verify your email address. Use the code below to complete your verification.
-              </p>
-
-              <!-- Verification Code -->
-              <div style="text-align: center; margin-bottom: 40px;">
-                <div style="display: inline-block; padding: 26px 40px; border-radius: 10px; background: linear-gradient(135deg, #292847 0%, #7c3aed 100%);">
-                  <span style="font-size: 38px; font-weight: 700; color: #ffffff; letter-spacing: 8px; font-family: 'Roboto Mono', monospace;">${verificationCode}</span>
-                </div>
-              </div>
-
-              <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #444444;">
-                This code will expire in 10 minutes. If you did not request it, you can safely ignore this email.
-              </p>
-
-              <!-- Security Info -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 32px; background-color: #f8fafc; border-left: 4px solid #4f46e5; border-radius: 6px;">
-                <tr>
-                  <td style="padding: 20px 24px;">
-                    <p style="margin: 0; font-size: 14px; color: #666666; line-height: 1.6;">
-                      <strong style="color: #222222;">Security Reminder:</strong> Never share your verification code with anyone. Our team will never ask for it.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb; text-align: center;">
-              <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">Need help? Contact us at 
-                <a href="mailto:${env.GMAIL_USER}" style="color: #4f46e5; text-decoration: none;">${env.GMAIL_USER}</a>
-              </p>
-              <p style="margin: 0; font-size: 12px; color: #999999;">© 2025 ${env.GMAIL_FROM_NAME || 'Team Insprano, GCEK Bhawanipatna'}. All rights reserved.</p>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Disclaimer -->
-        <table width="600" cellpadding="0" cellspacing="0" role="presentation">
-          <tr>
-            <td style="padding: 20px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #999999;">
-                This email was sent automatically to verify your account. If you did not initiate this request, please disregard.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="insprano-logo" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <h1>Please verify your identity for <strong>INSPRANO</strong></h1>
+        </div>
+        
+        <div class="content">
+            <div class="code-box">
+                <p class="code-label">Here is your INSPRANO verification code:</p>
+                <div class="verification-code">${verificationCode}</div>
+                <p class="info-text">This code is valid for <strong>10 minutes</strong> and can only be used once.</p>
+                <p class="info-text"><span class="warning">Please don't share this code with anyone:</span> we'll never ask for it on the phone or via email.</p>
+            </div>
+            
+            <div class="signature">
+                <p>Thanks,</p>
+                <p>The INSPRANO Team</p>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            <p>You're receiving this email because a verification code was requested for your INSPRANO account. If this wasn't you, please ignore this email.</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>INSPRANO 2025 <span class="footer-divider">·</span> Government College of Engineering Kalahandi <span class="footer-divider">·</span> Bhawanipatna, Odisha</p>
+    </div>
 </body>
 </html>`;
 };
@@ -513,23 +586,6 @@ const generateAnnouncementEmailHTML = ({
   hasImages: boolean;
   isUpdate?: boolean;
 }) => {
-  const priorityColors = {
-    URGENT: { bg: '#fee2e2', border: '#ef4444', text: '#dc2626' },
-    IMPORTANT: { bg: '#fef3c7', border: '#f59e0b', text: '#d97706' },
-    NORMAL: { bg: '#e0f2fe', border: '#0ea5e9', text: '#0284c7' },
-  };
-
-  const categoryColors = {
-    EMERGENCY: { bg: '#fef2f2', border: '#ef4444', text: '#dc2626' },
-    GENERAL: { bg: '#f0f9ff', border: '#3b82f6', text: '#1d4ed8' },
-    EVENT_UPDATE: { bg: '#f0fdf4', border: '#22c55e', text: '#16a34a' },
-    WORKSHOP: { bg: '#fef3c7', border: '#eab308', text: '#ca8a04' },
-    LOGISTICS: { bg: '#f3e8ff', border: '#a855f7', text: '#9333ea' },
-  };
-
-  const priorityStyle = priorityColors[priority as keyof typeof priorityColors] || priorityColors.NORMAL;
-  const categoryStyle = categoryColors[category as keyof typeof categoryColors] || categoryColors.GENERAL;
-
   // Convert description to HTML if it's JSON content, otherwise use as string
   const descriptionHTML = typeof description === 'string' 
     ? description 
@@ -538,129 +594,288 @@ const generateAnnouncementEmailHTML = ({
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>New Announcement - ${title}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${isUpdate ? 'Updated Announcement' : 'New Announcement'} - ${title}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #f6f8fa;
+            padding: 40px 20px;
+            color: #24292f;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            border-bottom: 1px solid #d0d7de;
+        }
+        
+        .announcement-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 16px;
+            fill: #24292f;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #24292f;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            color: #57606a;
+        }
+        
+        .badge.urgent {
+            background-color: #ffebe9;
+            border-color: #fd8c73;
+            color: #d1242f;
+        }
+        
+        .badge.important {
+            background-color: #fff5b4;
+            border-color: #d1cc00;
+            color: #644d00;
+        }
+        
+        .content {
+            padding: 32px 40px;
+        }
+        
+        .content h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #24292f;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        
+        .description {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #57606a;
+            margin: 16px 0 24px;
+            padding: 16px;
+            background-color: #f6f8fa;
+            border-radius: 6px;
+            border: 1px solid #d0d7de;
+        }
+        
+        .info-section {
+            margin: 24px 0;
+            padding: 20px;
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+        }
+        
+        .info-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #24292f;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d0d7de;
+        }
+        
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 14px;
+            align-items: center;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #57606a;
+            min-width: 100px;
+            margin-right: 16px;
+        }
+        
+        .info-value {
+            color: #24292f;
+            flex: 1;
+        }
+        
+        .attachment-notice {
+            padding: 16px;
+            background-color: #dafbe1;
+            border: 1px solid #2da44e;
+            border-radius: 6px;
+            margin: 24px 0;
+            text-align: center;
+        }
+        
+        .attachment-notice p {
+            font-size: 14px;
+            color: #1a7f37;
+            margin: 0;
+        }
+        
+        .update-notice {
+            padding: 16px;
+            background-color: #fff5b4;
+            border: 1px solid #d1cc00;
+            border-radius: 6px;
+            margin: 0 0 24px;
+            text-align: center;
+        }
+        
+        .update-notice p {
+            font-size: 14px;
+            color: #644d00;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .signature {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #d0d7de;
+        }
+        
+        .signature p {
+            font-size: 14px;
+            color: #57606a;
+            line-height: 1.6;
+        }
+        
+        .footer {
+            padding: 24px 40px;
+            background-color: #f6f8fa;
+            border-top: 1px solid #d0d7de;
+            font-size: 12px;
+            color: #57606a;
+            line-height: 1.6;
+        }
+        
+        .footer-info {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #57606a;
+        }
+        
+        .footer-divider {
+            margin: 0 4px;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; color: #333333;">
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="padding: 50px 20px;">
-    <tr>
-      <td align="center">
-        <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="background-color: #ffffff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); overflow: hidden;">
-          
-          <!-- Header -->
-          <tr>
-            <td style="background: linear-gradient(135deg, ${isUpdate ? '#7c3aed 0%, #a855f7 100%' : '#1e40af 0%, #3b82f6 100%'}); padding: 48px 40px 36px; text-align: center;">
-              <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #ffffff; letter-spacing: -0.4px;">${isUpdate ? '🔄 Updated Announcement' : '📢 New Announcement'}</h1>
-              <p style="margin: 8px 0 0; color: rgba(255,255,255,0.85); font-size: 15px;">${isUpdate ? 'Important changes to previous announcement' : 'Important information for you'}</p>
-            </td>
-          </tr>
-
-          <!-- Priority & Category Badges -->
-          <tr>
-            <td style="padding: 30px 40px 20px;">
-              <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
-                <div style="display: inline-block; padding: 8px 16px; border-radius: 20px; background-color: ${priorityStyle.bg}; border: 2px solid ${priorityStyle.border};">
-                  <span style="font-size: 12px; font-weight: 600; color: ${priorityStyle.text}; text-transform: uppercase;">${priority} Priority</span>
-                </div>
-                <div style="display: inline-block; padding: 8px 16px; border-radius: 20px; background-color: ${categoryStyle.bg}; border: 2px solid ${categoryStyle.border};">
-                  <span style="font-size: 12px; font-weight: 600; color: ${categoryStyle.text}; text-transform: uppercase;">${category.replace('_', ' ')}</span>
-                </div>
-              </div>
-            </td>
-          </tr>
-
-          <!-- Content -->
-          <tr>
-            <td style="padding: 0 40px 40px;">
-              ${isUpdate ? `
-              <!-- Update Notice -->
-              <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border-radius: 12px; padding: 20px; margin-bottom: 25px; border-left: 4px solid #f59e0b; text-align: center;">
-                <p style="margin: 0; font-size: 16px; color: #92400e; font-weight: 600;">🔄 This announcement has been updated</p>
-                <p style="margin: 8px 0 0; font-size: 14px; color: #92400e;">Please review the updated information below</p>
-              </div>
-              ` : ''}
-              
-              <!-- Title -->
-              <h2 style="margin: 0 0 20px; font-size: 24px; font-weight: 600; color: #1f2937; line-height: 1.3;">${title}</h2>
-
-              <!-- Description -->
-              <div style="margin: 0 0 30px; font-size: 16px; line-height: 1.6; color: #374151; border-radius: 8px; padding: 20px; background-color: #f8fafc;">
+<body>
+    <div class="container">
+        <div class="header">
+            <svg class="announcement-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <h1>INSPRANO ${isUpdate ? '- 🔁 Updated Announcement' : '- 🔈 New Announcement'}</h1>
+            <div class="badges">
+                <span class="badge ${priority.toLowerCase() === 'urgent' ? 'urgent' : priority.toLowerCase() === 'important' ? 'important' : ''}">${priority} Priority</span>
+                <span class="badge">${category.replace('_', ' ')}</span>
+            </div>
+        </div>
+        
+        <div class="content">
+            ${isUpdate ? `
+            <div class="update-notice">
+                <p>🔄 This announcement has been updated. Please review the changes below.</p>
+            </div>
+            ` : ''}
+            
+            <h2>${title}</h2>
+            
+            <div class="description">
                 ${descriptionHTML}
-              </div>
-
-              <!-- Attachments Notice -->
-              ${hasAttachments || hasImages ? `
-              <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-radius: 12px; padding: 20px; margin-bottom: 30px; border-left: 4px solid #22c55e; text-align: center;">
-                <p style="margin: 0; font-size: 16px; color: #166534; font-weight: 600;">📎 Files Attached</p>
-                <p style="margin: 8px 0 0; font-size: 14px; color: #166534;">${hasAttachments ? 'Documents and files' : ''}${hasAttachments && hasImages ? ' and ' : ''}${hasImages ? 'images' : ''} are attached to this announcement.</p>
-              </div>
-              ` : ''}
-
-              <!-- Event Details -->
-              ${relatedEvent ? `
-              <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border-radius: 12px; padding: 30px; margin-bottom: 30px; border-left: 4px solid #f59e0b;">
-                <h3 style="margin: 0 0 15px; font-size: 18px; font-weight: 600; color: #92400e;">🎯 Related Event</h3>
-                <table width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td style="padding: 8px 0; font-weight: 600; color: #374151; width: 80px;">Event:</td>
-                    <td style="padding: 8px 0; color: #111827;">${relatedEvent.title}</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 0; font-weight: 600; color: #374151;">Date:</td>
-                    <td style="padding: 8px 0; color: #111827;">${relatedEvent.date}</td>
-                  </tr>
-                </table>
-              </div>
-              ` : ''}
-
-              <!-- Publication Details -->
-              <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #64748b;">
-                <h3 style="margin: 0 0 15px; font-size: 18px; font-weight: 600; color: #475569;">📅 Announcement Details</h3>
-                <table width="100%" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td style="padding: 8px 0; font-weight: 600; color: #374151; width: 120px;">Published:</td>
-                    <td style="padding: 8px 0; color: #111827;">${publishDate}</td>
-                  </tr>
-                  ${expiryDate ? `
-                  <tr>
-                    <td style="padding: 8px 0; font-weight: 600; color: #374151;">Expires:</td>
-                    <td style="padding: 8px 0; color: #111827;">${expiryDate}</td>
-                  </tr>
-                  ` : ''}
-                </table>
-              </div>
-
-              <p style="margin: 0 0 24px; font-size: 16px; line-height: 1.6; color: #444444;">
-                Stay updated with all the latest announcements and information. If you have any questions, please don't hesitate to reach out to our support team.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb; text-align: center;">
-              <p style="margin: 0 0 10px; font-size: 14px; color: #666666;">Need help? Contact us at 
-                <a href="mailto:${env.GMAIL_USER}" style="color: #1e40af; text-decoration: none;">${env.GMAIL_USER}</a>
-              </p>
-              <p style="margin: 0; font-size: 12px; color: #999999;">© 2025 ${env.GMAIL_FROM_NAME || 'Event Management Platform'}. All rights reserved.</p>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Disclaimer -->
-        <table width="600" cellpadding="0" cellspacing="0" role="presentation">
-          <tr>
-            <td style="padding: 20px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #999999;">
-                This announcement was sent automatically. You received this because you're subscribed to our announcements.
-              </p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+            </div>
+            
+            ${hasAttachments || hasImages ? `
+            <div class="attachment-notice">
+                <p>📎 ${hasAttachments ? 'Files and documents' : ''}${hasAttachments && hasImages ? ' and ' : ''}${hasImages ? 'images' : ''} are attached to this announcement.</p>
+            </div>
+            ` : ''}
+            
+            ${relatedEvent ? `
+            <div class="info-section">
+                <h3>🎯 Related Event</h3>
+                <div class="info-row">
+                    <span class="info-label">Event:</span>
+                    <span class="info-value">${relatedEvent.title}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date:</span>
+                    <span class="info-value">${relatedEvent.date}</span>
+                </div>
+            </div>
+            ` : ''}
+            
+            <div class="info-section" style="margin-top: 32px;">
+                <h3>📅 Announcement Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Published:</span>
+                    <span class="info-value">${publishDate}</span>
+                </div>
+                ${expiryDate ? `
+                <div class="info-row">
+                    <span class="info-label">Expires:</span>
+                    <span class="info-value">${expiryDate}</span>
+                </div>
+                ` : ''}
+                <div class="info-row">
+                    <span class="info-label">Category:</span>
+                    <span class="info-value">${category.replace('_', ' ')}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Priority:</span>
+                    <span class="info-value">${priority}</span>
+                </div>
+            </div>
+            
+            <div class="signature">
+                <p>Stay updated with all the latest announcements and information. If you have any questions, please contact our support team at <strong>${env.GMAIL_USER}</strong>.</p>
+                <p style="margin-top: 16px;">Thanks,<br>The INSPRANO Team</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>You're receiving this email because you're subscribed to INSPRANO announcements. If this wasn't intended for you, please ignore this email.</p>
+        </div>
+    </div>
+    
+    <div class="footer-info">
+        <p>INSPRANO 2025 <span class="footer-divider">·</span> Government College of Engineering Kalahandi <span class="footer-divider">·</span> Bhawanipatna, Odisha</p>
+    </div>
 </body>
 </html>`;
 };
