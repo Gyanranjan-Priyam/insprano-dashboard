@@ -1,9 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Heart, Mail, Phone } from "lucide-react";
+import { CheckCircle, Heart, Mail, Phone, Home } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { FaDiscord, FaInstagram, FaWhatsapp } from "react-icons/fa";
-import { IconHome2 } from "@tabler/icons-react";
 
 export default function ThankYouPage() {
   return (
@@ -88,7 +87,7 @@ export default function ThankYouPage() {
             <div className="text-center pt-4">
               <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
                 <Link href="/">
-                  <IconHome2 className="w-4 h-4 mr-2" />
+                  <Home className="w-4 h-4 mr-2" />
                   Back to Home
                 </Link>
               </Button>

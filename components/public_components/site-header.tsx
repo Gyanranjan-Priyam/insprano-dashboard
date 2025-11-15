@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import { BackButton } from "@/components/ui/back-button"
 import { usePathname } from "next/navigation"
 import { useMemo } from "react"
-import { IconBellFilled } from "@tabler/icons-react";
+import { Bell } from "lucide-react";
 import { Button } from "../ui/button";
 import { useNotification } from "./notification-context";
 import { Badge } from "../ui/badge";
@@ -118,7 +118,7 @@ export function SiteHeader() {
             className="cursor-pointer relative"
             onClick={toggleNotification}
           >
-            <IconBellFilled size={18} />
+            <Bell size={18} />
             {unreadCount > 0 && (
               <Badge 
                 className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500 text-white"

@@ -2,17 +2,17 @@
 
 import * as React from "react"
 import {
-  IconCalendarStats,
-  IconHome2,
-  IconLayoutDashboardFilled,
-  IconReport,
-  IconSettings,
-  IconSpeakerphone,
-  IconTicket,
-  IconTransactionRupee,
-  IconUser,
-  IconUsersGroup,
-} from "@tabler/icons-react"
+  Calendar,
+  Home,
+  LayoutDashboard,
+  FileText,
+  Settings,
+  Megaphone,
+  Ticket,
+  DollarSign,
+  User,
+  Users,
+} from "lucide-react"
 
 import { NavMain } from "@/components/admin_components/dashboard/nav-main"
 import { NavSecondary } from "@/components/admin_components/dashboard/nav-secondary"
@@ -44,54 +44,54 @@ const data = {
     {
       title: "Dashboard",
       url: "/admin",
-      icon: IconLayoutDashboardFilled,
+      icon: LayoutDashboard,
     },
     {
       title: "Events",
       url: "/admin/events",
-      icon: IconCalendarStats,
+      icon: Calendar,
     },
     {
       title: "Accommodations",
       url: "/admin/accommodations",
-      icon: IconHome2,
+      icon: Home,
     },
     {
       title: "Participants",
       url: "/admin/participants",
-      icon: IconUser,
+      icon: User,
     },
     {
       title: "Teams",
       url: "/admin/team",
-      icon: IconUsersGroup,
+      icon: Users,
     },
     {
       title: "Payments",
       url: "/admin/payments",
-      icon: IconTransactionRupee,
+      icon: DollarSign,
     },
     {
       title: "Reports",
       url: "/admin/reports",
-      icon: IconReport,
+      icon: FileText,
     },
     {
       title: "Support Messages",
       url: "/admin/support-messages",
-      icon: IconTicket,
+      icon: Ticket,
     },
   ],
   navSecondary: [
     {
       title: "Settings",
       url: "/admin/settings",
-      icon: IconSettings,
+      icon: Settings,
     },
     {
       title: "Announcements",
       url: "/admin/announcement",
-      icon: IconSpeakerphone,
+      icon: Megaphone,
     },
   ],
 }

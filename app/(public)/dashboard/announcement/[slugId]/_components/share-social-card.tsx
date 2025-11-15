@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { IconBrandWhatsapp } from "@tabler/icons-react";
 
 interface ShareSocialCardProps {
   title: string;
@@ -77,7 +76,7 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
               onClick={shareToWhatsApp}
               className="flex items-center gap-2 justify-start text-left h-10 cursor-pointer"
             >
-              <IconBrandWhatsapp className="h-4 w-4 text-green-600" />
+              <MessageCircle className="h-4 w-4 text-green-600" />
               <span className="text-sm">WhatsApp</span>
             </Button>
 
@@ -178,7 +177,7 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
             onClick={shareToWhatsApp}
             className="flex-1 cursor-pointer"
           >
-            <IconBrandWhatsapp className="h-4 w-4 mr-2" />
+            <MessageCircle className="h-4 w-4 mr-2" />
             Quick Share via WhatsApp
           </Button>
           <Button

@@ -2,19 +2,17 @@
 
 import * as React from "react"
 import {
-  IconCalendarStats,
-  IconChartBar,
-  IconDashboard,
-  IconFolder,
-  IconHelp,
-  IconHome2,
-  IconInnerShadowTop,
-  IconLayoutDashboardFilled,
-  IconLinkPlus,
-  IconListDetails,
-  IconSettings,
-  IconUsersGroup,
-} from "@tabler/icons-react"
+  Calendar,
+  BarChart,
+  LayoutDashboard,
+  Folder,
+  HelpCircle,
+  Home,
+  Settings,
+  Users,
+  Plus,
+  List,
+} from "lucide-react"
 
 import { NavMain } from "@/components/public_components/nav-main"
 import { NavSecondary } from "@/components/public_components/nav-secondary"
@@ -46,27 +44,27 @@ const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: IconLayoutDashboardFilled,
+      icon: LayoutDashboard,
     },
     {
       title: "Events",
       url: "/dashboard/events",
-      icon: IconCalendarStats,
+      icon: Calendar,
     },
     {
       title: "Accommodations",
       url: "/dashboard/accommodations",
-      icon: IconHome2,
+      icon: Home,
     },
     {
       title: "Participate",
       url: "/dashboard/participate",
-      icon: IconLinkPlus,
+      icon: Plus,
     },
     {
       title: "Teams",
       url: "/dashboard/teams",
-      icon: IconUsersGroup,
+      icon: Users,
     },
   ],
 
@@ -74,12 +72,12 @@ const data = {
     {
       title: "Settings",
       url: "/dashboard/settings",
-      icon: IconSettings,
+      icon: Settings,
     },
     {
       title: "Contact Support",
       url: "/dashboard/contact-support",
-      icon: IconHelp,
+      icon: HelpCircle,
     },
   ],
 }

@@ -1,9 +1,9 @@
 "use client"
 
 import {
-  IconDotsVertical,
-  IconLogout,
-} from "@tabler/icons-react"
+  MoreVertical,
+  LogOut,
+} from "lucide-react"
 
 import {
   Avatar,
@@ -84,7 +84,7 @@ export function NavUser({
                   {user.email}
                 </span>
               </div>
-              <IconDotsVertical className="ml-auto size-4" />
+              <MoreVertical className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -108,7 +108,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
-              <IconLogout />
+              <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
