@@ -247,9 +247,9 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-2">
                     {announcement.isPinned && (
-                      <Pin className="h-4 w-4 text-primary flex-shrink-0" />
+                      <Pin className="h-4 w-4 text-primary shrink-0" />
                     )}
-                    <CardTitle className="text-base sm:text-lg line-clamp-2 leading-tight">
+                    <CardTitle className="text-base sm:text-lg line-clamp-2">
                       {announcement.title}
                     </CardTitle>
                   </div>
@@ -259,36 +259,25 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
                       {announcement.priority}
                     </Badge>
                     <Badge variant={getCategoryColor(announcement.category)} className="text-xs">
-                      {announcement.category.replace('_', ' ')}
+                      <span className="hidden sm:inline">{announcement.category.replace('_', ' ')}</span>
+                      <span className="sm:hidden">{announcement.category.replace('_', ' ').split(' ')[0]}</span>
                     </Badge>
                     {announcement.showInHomeBanner && (
-                      <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 hidden sm:inline-flex">
-                        Homepage Banner
-                      </Badge>
-                    )}
-                    {announcement.isRecurring && (
-                      <Badge variant="outline" className="text-xs text-purple-600 border-purple-200 hidden sm:inline-flex">
-                        Recurring
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  {/* Mobile-only additional badges */}
-                  <div className="flex flex-wrap items-center gap-1.5 sm:hidden">
-                    {announcement.showInHomeBanner && (
                       <Badge variant="outline" className="text-xs text-blue-600 border-blue-200">
-                        Banner
+                        <span className="hidden sm:inline">Homepage Banner</span>
+                        <span className="sm:hidden">Banner</span>
                       </Badge>
                     )}
                     {announcement.isRecurring && (
                       <Badge variant="outline" className="text-xs text-purple-600 border-purple-200">
-                        Recurring
+                        <span className="hidden sm:inline">Recurring</span>
+                        <span className="sm:hidden">Recur</span>
                       </Badge>
                     )}
                   </div>
                 </div>
 
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -344,7 +333,8 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
                       </AlertDialogContent>
                     </AlertDialog>
                   </DropdownMenuContent>
-                </DropdownMenu>
+                  </DropdownMenu>
+                </div>
               </div>
             </CardHeader>
             
@@ -367,14 +357,14 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
                     <span className="hidden sm:inline">Expires {format(new Date(announcement.expiryDate), "PPp")}</span>
-                    <span className="sm:hidden">Exp: {format(new Date(announcement.expiryDate), "dd/MM")}</span>
+                    <span className="sm:hidden">Exp: {format(new Date(announcement.expiryDate), "dd/MM/yy")}</span>
                   </div>
                 )}
                 
                 <div className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
                   <span className="hidden sm:inline">{announcement.audience.replace('_', ' ').toLowerCase()}</span>
-                  <span className="sm:hidden">{announcement.audience.split('_')[0].toLowerCase()}</span>
+                  <span className="sm:hidden">{announcement.audience.replace('_', ' ').toLowerCase().split(' ')[0]}</span>
                 </div>
                 
                 {announcement.relatedEvent && (
