@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { WeekDay } from "@/lib/generated/prisma/client";
+import { WeekDay } from "@prisma/client";
 
 export interface Stay {
   id: string;

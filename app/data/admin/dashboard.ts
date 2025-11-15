@@ -2,7 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "./require-admin";
-import { ParticipationStatus } from "@/lib/generated/prisma/enums";
+import { ParticipationStatus } from "@prisma/client";
 
 export async function getDashboardStats() {
     await requireAdmin();

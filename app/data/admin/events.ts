@@ -2,7 +2,7 @@ import "server-only";
 
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "./require-admin";
-import { EventCategory } from "@/lib/generated/prisma/enums";
+import { EventCategory } from "@prisma/client";
 
 export async function getAllEvents() {
     await requireAdmin();

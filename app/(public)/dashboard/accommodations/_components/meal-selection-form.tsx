@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Food, getFoodsForDays } from "../[userId]/actions";
 import { ArrowLeft, ArrowRight, UtensilsCrossed, Calendar, IndianRupee } from "lucide-react";
 import { format } from "date-fns";
-import { WeekDay } from "@/lib/generated/prisma/client";
+import { WeekDay } from "@prisma/client";
 import Image from "next/image";
 
 interface BookingData {

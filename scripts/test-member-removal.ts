@@ -3,7 +3,7 @@
  * This tests the cascading deletion of team membership, participation, and user account
  */
 import 'dotenv/config';
-import { PrismaClient } from '../lib/generated/prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
