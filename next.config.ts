@@ -43,6 +43,8 @@ const nextConfig: NextConfig = {
   },
   // Add serverExternalPackages to avoid issues
   serverExternalPackages: ['sharp'],
+  // Add turbopack configuration to silence deployment warnings
+  turbopack: {},
 
   webpack: (config, { isServer }) => {
     if (isServer) {
