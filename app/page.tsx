@@ -1,5 +1,4 @@
 import { auth } from "@/lib/auth";
-import { LoginForm } from "./(auth)/login/_components/LoginForm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -18,7 +17,6 @@ export default async function Home() {
     return redirect("/dashboard");
   }
 
-  return (
-    <LoginForm />
-  );
+  // For unauthenticated users, redirect to login page
+  return redirect("/login");
 }
