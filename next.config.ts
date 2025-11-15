@@ -46,15 +46,9 @@ const nextConfig: NextConfig = {
   // Add turbopack configuration to silence deployment warnings
   turbopack: {},
 
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals = [
-        ...(config.externals || []),
-        "@prisma/client",
-        "prisma",
-      ]
-    }
-    return config
+webpack: (config) => {
+    config.externals.push("@prisma/client", ".prisma/client");
+    return config;
   },
 };
 
