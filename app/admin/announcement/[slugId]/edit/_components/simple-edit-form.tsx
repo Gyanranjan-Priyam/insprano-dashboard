@@ -118,13 +118,6 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={handleCancel} className="gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Announcements
-        </Button>
-      </div>
-
       <form onSubmit={onSubmit} className="space-y-6">
         <Card>
           <CardHeader>

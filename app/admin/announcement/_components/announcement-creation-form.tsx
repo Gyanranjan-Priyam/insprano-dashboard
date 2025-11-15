@@ -135,12 +135,12 @@ export function AnnouncementCreationForm({
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       <div className="flex flex-col space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">
           {editingAnnouncement ? 'Edit Announcement' : 'Create Announcement'}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           {editingAnnouncement 
             ? 'Update your announcement details below.' 
             : 'Create a new announcement to communicate with your audience effectively.'
@@ -149,7 +149,7 @@ export function AnnouncementCreationForm({
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 md:space-y-8">
           {/* Basic Information */}
           <Card>
             <CardHeader>
@@ -194,7 +194,7 @@ export function AnnouncementCreationForm({
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 <FormField
                   control={form.control as any}
                   name="category"
@@ -369,15 +369,15 @@ export function AnnouncementCreationForm({
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
                 <FormField
                   control={form.control as any}
                   name="sendNotifications"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 md:p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Send Notifications</FormLabel>
-                        <FormDescription>
+                        <FormLabel className="text-sm md:text-base">Send Notifications</FormLabel>
+                        <FormDescription className="text-xs md:text-sm">
                           Send push/email notifications to the audience
                         </FormDescription>
                       </div>
@@ -395,10 +395,10 @@ export function AnnouncementCreationForm({
                   control={form.control as any}
                   name="isPinned"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 md:p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Pin Announcement</FormLabel>
-                        <FormDescription>
+                        <FormLabel className="text-sm md:text-base">Pin Announcement</FormLabel>
+                        <FormDescription className="text-xs md:text-sm">
                           Highlight at the top of announcements list
                         </FormDescription>
                       </div>
@@ -416,10 +416,10 @@ export function AnnouncementCreationForm({
                   control={form.control as any}
                   name="showInHomeBanner"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 md:p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Show in Homepage Banner</FormLabel>
-                        <FormDescription>
+                        <FormLabel className="text-sm md:text-base">Show in Homepage Banner</FormLabel>
+                        <FormDescription className="text-xs md:text-sm">
                           Display prominently on the homepage
                         </FormDescription>
                       </div>
@@ -448,7 +448,7 @@ export function AnnouncementCreationForm({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <FormField
                   control={form.control as any}
                   name="publishDate"
@@ -603,10 +603,10 @@ export function AnnouncementCreationForm({
                   control={form.control as any}
                   name="isRecurring"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 md:p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Recurring Announcement</FormLabel>
-                        <FormDescription>
+                        <FormLabel className="text-sm md:text-base">Recurring Announcement</FormLabel>
+                        <FormDescription className="text-xs md:text-sm">
                           Send this announcement repeatedly at specified intervals
                         </FormDescription>
                       </div>
@@ -621,7 +621,7 @@ export function AnnouncementCreationForm({
                 />
 
                 {isRecurring && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ml-2 md:ml-4">
                     <FormField
                       control={form.control as any}
                       name="recurrenceType"
@@ -680,29 +680,32 @@ export function AnnouncementCreationForm({
           </Card>
 
           {/* Submit Actions */}
-          <div className="flex flex-col sm:flex-row gap-4 pt-6">
-            <Button type="submit" className="flex-1" disabled={pending}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 pt-4 md:pt-6">
+            <Button type="submit" className="flex-1 w-full sm:w-auto" disabled={pending}>
               {pending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {editingAnnouncement ? 'Updating...' : 'Creating...'}
+                  <span className="hidden sm:inline">{editingAnnouncement ? 'Updating...' : 'Creating...'}</span>
+                  <span className="sm:hidden">{editingAnnouncement ? 'Updating...' : 'Creating...'}</span>
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4 mr-2" />
-                  {editingAnnouncement ? 'Update Announcement' : 'Create Announcement'}
+                  <span className="hidden sm:inline">{editingAnnouncement ? 'Update Announcement' : 'Create Announcement'}</span>
+                  <span className="sm:hidden">{editingAnnouncement ? 'Update' : 'Create'}</span>
                 </>
               )}
             </Button>
             
             {editingAnnouncement && (
-              <Button type="button" variant="outline" onClick={onCancelEdit}>
-                Cancel Edit
+              <Button type="button" variant="outline" onClick={onCancelEdit} className="w-full sm:w-auto">
+                Cancel
               </Button>
             )}
             
-            <Button type="button" variant="outline" onClick={() => form.reset()}>
-              Reset Form
+            <Button type="button" variant="outline" onClick={() => form.reset()} className="w-full sm:w-auto">
+              <span className="hidden sm:inline">Reset Form</span>
+              <span className="sm:hidden">Reset</span>
             </Button>
           </div>
         </form>

@@ -154,65 +154,70 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
   const PriorityIcon = priorityStyle.icon;
 
   return (
-    <div className="container mx-auto px-4 py-6 ">
+    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1 items-center">
-            <div className="flex items-center justify-between gap-2 mb-3">
-               <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
-              {announcement.title}
-            </h1>
-            <div className="flex items-center gap-2 mb-3">
-              <Badge variant="outline" className={`text-xs ${priorityStyle.badge}`}>
-                <PriorityIcon className="h-3 w-3 mr-1" />
-                {announcement.priority}
-              </Badge>
-              <Badge variant="secondary" className="text-xs">
-                {getCategoryDisplay(announcement.category)}
-              </Badge>
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-start justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col gap-2 sm:gap-3">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight pr-2">
+                {announcement.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <Badge variant="outline" className={`text-xs ${priorityStyle.badge} flex items-center gap-1`}>
+                  <PriorityIcon className="h-3 w-3" />
+                  <span className="hidden xs:inline">{announcement.priority}</span>
+                  <span className="xs:hidden">{announcement.priority.charAt(0)}</span>
+                </Badge>
+                <Badge variant="secondary" className="text-xs">
+                  <span className="hidden sm:inline">{getCategoryDisplay(announcement.category)}</span>
+                  <span className="sm:hidden">{getCategoryDisplay(announcement.category).split(' ')[0]}</span>
+                </Badge>
+              </div>
             </div>
-            </div>
-
           </div>
         </div>
         
-        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            <span>
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="hidden sm:inline">
               Published {format(new Date(announcement.createdAt), 'PPP')}
+            </span>
+            <span className="sm:hidden">
+              {format(new Date(announcement.createdAt), 'dd/MM/yy')}
             </span>
           </div>
           
           {announcement.updatedAt !== announcement.createdAt && (
             <div className="flex items-center gap-1">
               <span className="text-orange-600">•</span>
-              <span>Updated {format(new Date(announcement.updatedAt), 'PPP')}</span>
+              <span className="hidden sm:inline">Updated {format(new Date(announcement.updatedAt), 'PPP')}</span>
+              <span className="sm:hidden">Updated {format(new Date(announcement.updatedAt), 'dd/MM/yy')}</span>
             </div>
           )}
           
           <div className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
+            <Users className="h-3 w-3 sm:h-4 sm:w-4" />
             <span>ID: {announcement.slugId}</span>
           </div>
         </div>
       </div>
 
-      <Separator className="mb-6" />
+      <Separator className="mb-4 sm:mb-6" />
 
       {/* Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Description */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Announcement Details</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg">Announcement Details</CardTitle>
             </CardHeader>
             <Separator />
-            <CardContent>
-              <div className="prose dark:prose-invert max-w-none">
+            <CardContent className="pt-4">
+              <div className="prose dark:prose-invert max-w-none text-sm sm:text-base">
                 <SafeDescriptionRenderer description={announcement.description} />
               </div>
             </CardContent>
@@ -221,29 +226,30 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
           {/* Related Event */}
           {announcement.relatedEvent && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-blue-600" />
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                   Related Event
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-semibold text-sm sm:text-base text-foreground">
                     {announcement.relatedEvent.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {announcement.relatedEvent.description}
                   </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                     <span>
                       {format(new Date(announcement.relatedEvent.date), 'PPP')}
                     </span>
                   </div>
                   <Link href={`/dashboard/events/${announcement.relatedEvent.slugId}`}>
-                    <Button size="sm" variant="outline">
-                      View Event Details
+                    <Button size="sm" variant="outline" className="text-xs sm:text-sm">
+                      <span className="hidden sm:inline">View Event Details</span>
+                      <span className="sm:hidden">View Event</span>
                     </Button>
                   </Link>
                 </div>
@@ -253,29 +259,30 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Quick Info */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Info</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg">Quick Info</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 sm:space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Priority</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Priority</span>
                 <Badge variant="outline" className={`text-xs ${priorityStyle.badge}`}>
                   {announcement.priority}
                 </Badge>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Category</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Category</span>
                 <Badge variant="secondary" className="text-xs">
-                  {getCategoryDisplay(announcement.category)}
+                  <span className="hidden sm:inline">{getCategoryDisplay(announcement.category)}</span>
+                  <span className="sm:hidden">{getCategoryDisplay(announcement.category).split(' ')[0]}</span>
                 </Badge>
               </div>
               
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Published</span>
+                <span className="text-xs sm:text-sm text-muted-foreground">Published</span>
                 <span className="text-xs">
                   {format(new Date(announcement.createdAt), 'dd/MM/yyyy')}
                 </span>
@@ -283,7 +290,7 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
               
               {announcement.updatedAt !== announcement.createdAt && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Last Updated</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">Last Updated</span>
                   <span className="text-xs text-orange-600">
                     {format(new Date(announcement.updatedAt), 'dd/MM/yyyy')}
                   </span>
@@ -295,24 +302,25 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
           {/* Attachments */}
           {(announcement.attachmentKeys.length > 0 || announcement.imageKeys.length > 0) && (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Attachments</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base sm:text-lg">Attachments</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {announcement.attachmentKeys.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <FileText className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium">Files</span>
+                      <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
+                      <span className="text-xs sm:text-sm font-medium">Files</span>
                       <Badge variant="secondary" className="text-xs">
                         {announcement.attachmentKeys.length}
                       </Badge>
                     </div>
                     <div className="space-y-2">
                       {announcement.attachmentKeys.map((key, index) => (
-                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs">
+                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs h-8">
                           <FileText className="h-3 w-3 mr-2" />
-                          Attachment {index + 1}
+                          <span className="hidden sm:inline">Attachment {index + 1}</span>
+                          <span className="sm:hidden">File {index + 1}</span>
                         </Button>
                       ))}
                     </div>
@@ -322,17 +330,18 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
                 {announcement.imageKeys.length > 0 && (
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <Image className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium">Images</span>
+                      <Image className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                      <span className="text-xs sm:text-sm font-medium">Images</span>
                       <Badge variant="secondary" className="text-xs">
                         {announcement.imageKeys.length}
                       </Badge>
                     </div>
                     <div className="space-y-2">
                       {announcement.imageKeys.map((key, index) => (
-                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs">
+                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs h-8">
                           <Image className="h-3 w-3 mr-2" />
-                          Image {index + 1}
+                          <span className="hidden sm:inline">Image {index + 1}</span>
+                          <span className="sm:hidden">Img {index + 1}</span>
                         </Button>
                       ))}
                     </div>
@@ -344,20 +353,21 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
 
           {/* Actions */}
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Actions</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base sm:text-lg">Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Dialog>
                 <DialogTrigger asChild>
                   <Button className="w-full" size="sm">
-                    Share Announcement
+                    <span className="hidden sm:inline">Share Announcement</span>
+                    <span className="sm:hidden">Share</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-sm sm:max-w-md mx-4">
                   <DialogHeader>
-                    <DialogTitle>Share Announcement</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-base sm:text-lg">Share Announcement</DialogTitle>
+                    <DialogDescription className="text-xs sm:text-sm">
                       Share this announcement with others through various platforms
                     </DialogDescription>
                   </DialogHeader>
@@ -372,8 +382,9 @@ export default async function AnnouncementPage({ params }: { params: Promise<{ s
               </Dialog>
               <Link 
                href={"/dashboard/contact-support"}
-               className={buttonVariants({ variant: "outline", className: "w-full text-center" })}>
-                  Report Issue
+               className={buttonVariants({ variant: "outline", className: "w-full text-center text-xs sm:text-sm" })}>
+                  <span className="hidden sm:inline">Report Issue</span>
+                  <span className="sm:hidden">Report</span>
               </Link>
             </CardContent>
           </Card>

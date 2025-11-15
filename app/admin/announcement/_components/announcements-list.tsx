@@ -226,60 +226,75 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 md:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Announcements</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Announcements</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage and organize your announcements
           </p>
         </div>
-        <div className="text-sm text-muted-foreground">
+        <div className="text-xs sm:text-sm text-muted-foreground">
           {announcements.length} announcement{announcements.length !== 1 ? 's' : ''} total
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3 md:gap-4">
         {announcements.map((announcement) => (
           <Card key={announcement.id} className={`transition-all hover:shadow-md ${announcement.isPinned ? 'ring-2 ring-primary/20 bg-primary/5' : ''}`}>
             <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-2">
                     {announcement.isPinned && (
-                      <Pin className="h-4 w-4 text-primary" />
+                      <Pin className="h-4 w-4 text-primary flex-shrink-0" />
                     )}
-                    <CardTitle className="text-lg line-clamp-2">
+                    <CardTitle className="text-base sm:text-lg line-clamp-2 leading-tight">
                       {announcement.title}
                     </CardTitle>
                   </div>
                   
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant={getPriorityColor(announcement.priority)}>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <Badge variant={getPriorityColor(announcement.priority)} className="text-xs">
                       {announcement.priority}
                     </Badge>
-                    <Badge variant={getCategoryColor(announcement.category)}>
+                    <Badge variant={getCategoryColor(announcement.category)} className="text-xs">
                       {announcement.category.replace('_', ' ')}
                     </Badge>
                     {announcement.showInHomeBanner && (
-                      <Badge variant="outline" className="text-blue-600 border-blue-200">
+                      <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 hidden sm:inline-flex">
                         Homepage Banner
                       </Badge>
                     )}
                     {announcement.isRecurring && (
-                      <Badge variant="outline" className="text-purple-600 border-purple-200">
+                      <Badge variant="outline" className="text-xs text-purple-600 border-purple-200 hidden sm:inline-flex">
+                        Recurring
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  {/* Mobile-only additional badges */}
+                  <div className="flex flex-wrap items-center gap-1.5 sm:hidden">
+                    {announcement.showInHomeBanner && (
+                      <Badge variant="outline" className="text-xs text-blue-600 border-blue-200">
+                        Banner
+                      </Badge>
+                    )}
+                    {announcement.isRecurring && (
+                      <Badge variant="outline" className="text-xs text-purple-600 border-purple-200">
                         Recurring
                       </Badge>
                     )}
                   </div>
                 </div>
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
+                <div className="flex-shrink-0">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => onEdit?.(announcement)}>
                       <Edit className="mr-2 h-4 w-4" />
@@ -334,35 +349,39 @@ export function AnnouncementsList({ announcements, onEdit, onRefresh }: Announce
             </CardHeader>
             
             <CardContent className="pt-0">
-              <div className="text-sm text-muted-foreground line-clamp-3 mb-4">
+              <div className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 mb-3 sm:mb-4">
                 <RenderDescription json={parseContent(announcement.description)} />
               </div>
               
-              <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1 font-mono">
                   <span className="font-semibold text-blue-600">{announcement.slugId}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  Published {format(new Date(announcement.publishDate), "PPp")}
+                  <span className="hidden sm:inline">Published {format(new Date(announcement.publishDate), "PPp")}</span>
+                  <span className="sm:hidden">{format(new Date(announcement.publishDate), "dd/MM/yy")}</span>
                 </div>
                 
                 {announcement.expiryDate && (
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
-                    Expires {format(new Date(announcement.expiryDate), "PPp")}
+                    <span className="hidden sm:inline">Expires {format(new Date(announcement.expiryDate), "PPp")}</span>
+                    <span className="sm:hidden">Exp: {format(new Date(announcement.expiryDate), "dd/MM")}</span>
                   </div>
                 )}
                 
                 <div className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  {announcement.audience.replace('_', ' ').toLowerCase()}
+                  <span className="hidden sm:inline">{announcement.audience.replace('_', ' ').toLowerCase()}</span>
+                  <span className="sm:hidden">{announcement.audience.split('_')[0].toLowerCase()}</span>
                 </div>
                 
                 {announcement.relatedEvent && (
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3" />
-                    Related to {announcement.relatedEvent.title}
+                    <span className="hidden sm:inline">Related to {announcement.relatedEvent.title}</span>
+                    <span className="sm:hidden">Event</span>
                   </div>
                 )}
               </div>
