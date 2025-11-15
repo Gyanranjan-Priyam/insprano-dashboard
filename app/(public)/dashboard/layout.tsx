@@ -23,7 +23,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   // If user is admin, redirect them to admin dashboard
   if (session.user.role === "admin") {
-    return redirect("/admin/events");
+    return redirect("/admin");
   }
 
   return (

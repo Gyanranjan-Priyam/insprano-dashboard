@@ -13,7 +13,7 @@ export async function GET() {
 
     // If user is admin, redirect to admin dashboard
     if (session.user.role === "admin") {
-        return redirect("/admin/events");
+        return redirect("/admin");
     }
 
     // Otherwise, redirect to user dashboard

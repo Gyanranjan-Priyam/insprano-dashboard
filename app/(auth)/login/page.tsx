@@ -12,7 +12,7 @@ export default async function LoginPage() {
     if(session) {
         // If user is admin, redirect to admin dashboard
         if (session.user.role === "admin") {
-            return redirect("/admin/events");
+            return redirect("/admin");
         }
         // Otherwise, redirect to user dashboard
         return redirect("/dashboard");

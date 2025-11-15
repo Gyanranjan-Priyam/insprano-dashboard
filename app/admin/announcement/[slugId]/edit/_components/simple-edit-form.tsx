@@ -117,25 +117,26 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={onSubmit} className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      <form onSubmit={onSubmit} className="space-y-4 sm:space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Basic Information</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">Basic Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <label className="text-sm font-medium">Title</label>
+              <label className="text-xs sm:text-sm font-medium">Title</label>
               <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter announcement title"
+                className="text-sm"
                 required
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium">Description</label>
+              <label className="text-xs sm:text-sm font-medium">Description</label>
               <RichTextEditor 
                 field={{
                   value: description,
@@ -144,13 +145,13 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="text-sm font-medium">Category</label>
+                <label className="text-xs sm:text-sm font-medium">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-sm"
                   required
                 >
                   <option value="GENERAL">General</option>
@@ -162,11 +163,11 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
               </div>
 
               <div>
-                <label className="text-sm font-medium">Priority</label>
+                <label className="text-xs sm:text-sm font-medium">Priority</label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-sm"
                   required
                 >
                   <option value="URGENT">Urgent</option>
@@ -177,11 +178,11 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
             </div>
 
             <div>
-              <label className="text-sm font-medium">Target Audience</label>
+              <label className="text-xs sm:text-sm font-medium">Target Audience</label>
               <select
                 value={audience}
                 onChange={(e) => setAudience(e.target.value)}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md text-sm"
                 required
               >
                 <option value="PUBLIC">Public</option>
@@ -191,11 +192,11 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
             </div>
 
             <div>
-              <label className="text-sm font-medium">Related Event (Optional)</label>
+              <label className="text-xs sm:text-sm font-medium">Related Event (Optional)</label>
               <select
                 value={relatedEventId}
                 onChange={(e) => setRelatedEventId(e.target.value)}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md text-sm"
               >
                 <option value="">No related event</option>
                 {events.map((event) => (
@@ -209,12 +210,12 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>File Uploads</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">File Uploads</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div>
-              <label className="text-sm font-medium">Attachments (Optional)</label>
+              <label className="text-xs sm:text-sm font-medium">Attachments (Optional)</label>
               <p className="text-xs text-muted-foreground mb-2">
                 Upload documents, PDFs, or other files (Max 10 files, 10MB each)
               </p>
@@ -229,7 +230,7 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
             <Separator />
 
             <div>
-              <label className="text-sm font-medium">Images (Optional)</label>
+              <label className="text-xs sm:text-sm font-medium">Images (Optional)</label>
               <p className="text-xs text-muted-foreground mb-2">
                 Upload images, posters, or visual elements (Max 5 images, 5MB each)
               </p>
@@ -244,18 +245,19 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Display Settings</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">Display Settings</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3 sm:space-y-4">
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 id="isPinned"
                 checked={isPinned}
                 onChange={(e) => setIsPinned(e.target.checked)}
+                className="h-4 w-4"
               />
-              <label htmlFor="isPinned" className="text-sm font-medium">
+              <label htmlFor="isPinned" className="text-xs sm:text-sm font-medium">
                 Pin Announcement
               </label>
             </div>
@@ -268,8 +270,9 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
                 id="showInHomeBanner"
                 checked={showInHomeBanner}
                 onChange={(e) => setShowInHomeBanner(e.target.checked)}
+                className="h-4 w-4"
               />
-              <label htmlFor="showInHomeBanner" className="text-sm font-medium">
+              <label htmlFor="showInHomeBanner" className="text-xs sm:text-sm font-medium">
                 Show in Home Banner
               </label>
             </div>
@@ -282,8 +285,9 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
                 id="sendNotifications"
                 checked={sendNotifications}
                 onChange={(e) => setSendNotifications(e.target.checked)}
+                className="h-4 w-4"
               />
-              <label htmlFor="sendNotifications" className="text-sm font-medium">
+              <label htmlFor="sendNotifications" className="text-xs sm:text-sm font-medium">
                 Send Notifications
               </label>
             </div>
@@ -291,55 +295,58 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Schedule Settings</CardTitle>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">Schedule Settings</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="space-y-3 sm:space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label className="text-sm font-medium">Publish Date</label>
+                <label className="text-xs sm:text-sm font-medium">Publish Date</label>
                 <Input
                   type="datetime-local"
                   value={publishDate}
                   onChange={(e) => setPublishDate(e.target.value)}
+                  className="text-sm"
                   required
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium">Expiry Date (Optional)</label>
+                <label className="text-xs sm:text-sm font-medium">Expiry Date (Optional)</label>
                 <Input
                   type="datetime-local"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
+                  className="text-sm"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-between space-x-4">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button type="button" variant="destructive" className="gap-2">
+              <Button type="button" variant="destructive" className="gap-2 w-full sm:w-auto">
                 <Trash2 className="h-4 w-4" />
-                Delete Announcement
+                <span className="hidden sm:inline">Delete Announcement</span>
+                <span className="sm:hidden">Delete</span>
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="max-w-sm sm:max-w-md mx-4">
               <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
+                <AlertDialogTitle className="text-base sm:text-lg">Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription className="text-xs sm:text-sm">
                   This action cannot be undone. This will permanently delete the announcement
                   "{announcement.title}" and remove all its data from the system.
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                <AlertDialogCancel className="w-full sm:w-auto">Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="bg-destructive hover:bg-destructive/90"
+                  className="bg-destructive hover:bg-destructive/90 w-full sm:w-auto"
                 >
                   {isDeleting ? "Deleting..." : "Delete"}
                 </AlertDialogAction>
@@ -347,17 +354,18 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
             </AlertDialogContent>
           </AlertDialog>
 
-          <div className="flex space-x-4">
-            <Button type="button" variant="outline" onClick={handleCancel}>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <Button type="button" variant="outline" onClick={handleCancel} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit" disabled={isLoading} className="gap-2">
+            <Button type="submit" disabled={isLoading} className="gap-2 w-full sm:w-auto">
               {isLoading ? (
                 "Updating..."
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  Update Announcement
+                  <span className="hidden sm:inline">Update Announcement</span>
+                  <span className="sm:hidden">Update</span>
                 </>
               )}
             </Button>
