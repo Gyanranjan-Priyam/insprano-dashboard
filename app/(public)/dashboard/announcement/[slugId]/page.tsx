@@ -1,0 +1,384 @@
+import { notFound } from "next/navigation";
+import { format } from "date-fns";
+import { Calendar, Clock, FileText, Image, ArrowLeft, AlertCircle, Info, TrendingUp, Users } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { RenderDescription } from "@/components/admin_components/rich-text-editor/RenderDescription";
+import { type JSONContent } from "@tiptap/react";
+import { ShareSocialCard } from "./_components/share-social-card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+interface AnnouncementData {
+  id: string;
+  slugId: string;
+  title: string;
+  description: JSONContent | string | null | undefined;
+  category: string;
+  priority: "LOW" | "NORMAL" | "HIGH" | "URGENT";
+  createdAt: string;
+  updatedAt: string;
+  attachmentKeys: string[];
+  imageKeys: string[];
+  relatedEvent?: {
+    id: string;
+    title: string;
+    slugId: string;
+    description: string;
+    date: string;
+  };
+  createdBy: string;
+}
+
+// Fetch announcement data
+async function getAnnouncement(slugId: string): Promise<AnnouncementData | null> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/announcements/${slugId}`, {
+      cache: 'no-store' // Ensure fresh data
+    });
+    
+    if (!response.ok) {
+      return null;
+    }
+    
+    const data = await response.json();
+    return data.success ? data.data : null;
+  } catch (error) {
+    console.error('Error fetching announcement:', error);
+    return null;
+  }
+}
+
+// Priority styling
+function getPriorityStyles(priority: string) {
+  switch (priority) {
+    case "URGENT":
+      return {
+        badge: "bg-red-100 text-red-800 border-red-200",
+        icon: AlertCircle,
+        color: "text-red-600"
+      };
+    case "HIGH":
+      return {
+        badge: "bg-orange-100 text-orange-800 border-orange-200",
+        icon: TrendingUp,
+        color: "text-orange-600"
+      };
+    case "NORMAL":
+      return {
+        badge: "bg-blue-100 text-blue-800 border-blue-200",
+        icon: Info,
+        color: "text-blue-600"
+      };
+    case "LOW":
+      return {
+        badge: "bg-gray-100 text-gray-800 border-gray-200",
+        icon: Info,
+        color: "text-gray-600"
+      };
+    default:
+      return {
+        badge: "bg-gray-100 text-gray-800 border-gray-200",
+        icon: Info,
+        color: "text-gray-600"
+      };
+  }
+}
+
+// Safe description renderer with better error handling
+function SafeDescriptionRenderer({ description }: { description: any }) {
+  // Handle string descriptions
+  if (typeof description === 'string') {
+    try {
+      // Try to parse as JSON if it's a string
+      const parsed = JSON.parse(description);
+      if (parsed && typeof parsed === 'object' && (parsed.type || parsed.content)) {
+        return <RenderDescription json={parsed} />;
+      }
+    } catch {
+      // If parsing fails, treat as plain text
+      return <p className="text-foreground">{description}</p>;
+    }
+    return <p className="text-foreground">{description}</p>;
+  }
+
+  // Handle JSONContent objects
+  if (description && typeof description === 'object') {
+    // Check if it's a valid TipTap JSONContent
+    if (description.type || description.content) {
+      return <RenderDescription json={description} />;
+    }
+    
+    // If it's an object but not valid JSONContent, try to extract text
+    const textContent = JSON.stringify(description);
+    return <p className="text-muted-foreground">Content format not supported: {textContent}</p>;
+  }
+
+  return <p className="text-muted-foreground">No description available</p>;
+}
+
+// Category display names
+function getCategoryDisplay(category: string) {
+  const categoryMap: Record<string, string> = {
+    GENERAL_ANNOUNCEMENT: "General",
+    EVENT_UPDATE: "Event Update",
+    REGISTRATION_UPDATE: "Registration",
+    ACCOMMODATION_UPDATE: "Accommodation",
+    PAYMENT_UPDATE: "Payment",
+    TEAM_UPDATE: "Team",
+    SYSTEM_MAINTENANCE: "System",
+    URGENT_NOTICE: "Urgent"
+  };
+  
+  return categoryMap[category] || category;
+}
+
+export default async function AnnouncementPage({ params }: { params: Promise<{ slugId: string }> }) {
+  const { slugId } = await params;
+  const announcement = await getAnnouncement(slugId);
+
+  if (!announcement) {
+    notFound();
+  }
+
+  const priorityStyle = getPriorityStyles(announcement.priority);
+  const PriorityIcon = priorityStyle.icon;
+
+  return (
+    <div className="container mx-auto px-4 py-6 ">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex-1 items-center">
+            <div className="flex items-center justify-between gap-2 mb-3">
+               <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-tight">
+              {announcement.title}
+            </h1>
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="outline" className={`text-xs ${priorityStyle.badge}`}>
+                <PriorityIcon className="h-3 w-3 mr-1" />
+                {announcement.priority}
+              </Badge>
+              <Badge variant="secondary" className="text-xs">
+                {getCategoryDisplay(announcement.category)}
+              </Badge>
+            </div>
+            </div>
+
+          </div>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            <span>
+              Published {format(new Date(announcement.createdAt), 'PPP')}
+            </span>
+          </div>
+          
+          {announcement.updatedAt !== announcement.createdAt && (
+            <div className="flex items-center gap-1">
+              <span className="text-orange-600">•</span>
+              <span>Updated {format(new Date(announcement.updatedAt), 'PPP')}</span>
+            </div>
+          )}
+          
+          <div className="flex items-center gap-1">
+            <Users className="h-4 w-4" />
+            <span>ID: {announcement.slugId}</span>
+          </div>
+        </div>
+      </div>
+
+      <Separator className="mb-6" />
+
+      {/* Content Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Description */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Announcement Details</CardTitle>
+            </CardHeader>
+            <Separator />
+            <CardContent>
+              <div className="prose dark:prose-invert max-w-none">
+                <SafeDescriptionRenderer description={announcement.description} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Related Event */}
+          {announcement.relatedEvent && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-blue-600" />
+                  Related Event
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground">
+                    {announcement.relatedEvent.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {announcement.relatedEvent.description}
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Calendar className="h-4 w-4" />
+                    <span>
+                      {format(new Date(announcement.relatedEvent.date), 'PPP')}
+                    </span>
+                  </div>
+                  <Link href={`/dashboard/events/${announcement.relatedEvent.slugId}`}>
+                    <Button size="sm" variant="outline">
+                      View Event Details
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Quick Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Quick Info</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Priority</span>
+                <Badge variant="outline" className={`text-xs ${priorityStyle.badge}`}>
+                  {announcement.priority}
+                </Badge>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Category</span>
+                <Badge variant="secondary" className="text-xs">
+                  {getCategoryDisplay(announcement.category)}
+                </Badge>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Published</span>
+                <span className="text-xs">
+                  {format(new Date(announcement.createdAt), 'dd/MM/yyyy')}
+                </span>
+              </div>
+              
+              {announcement.updatedAt !== announcement.createdAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Last Updated</span>
+                  <span className="text-xs text-orange-600">
+                    {format(new Date(announcement.updatedAt), 'dd/MM/yyyy')}
+                  </span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Attachments */}
+          {(announcement.attachmentKeys.length > 0 || announcement.imageKeys.length > 0) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Attachments</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {announcement.attachmentKeys.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm font-medium">Files</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {announcement.attachmentKeys.length}
+                      </Badge>
+                    </div>
+                    <div className="space-y-2">
+                      {announcement.attachmentKeys.map((key, index) => (
+                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs">
+                          <FileText className="h-3 w-3 mr-2" />
+                          Attachment {index + 1}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {announcement.imageKeys.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Image className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium">Images</span>
+                      <Badge variant="secondary" className="text-xs">
+                        {announcement.imageKeys.length}
+                      </Badge>
+                    </div>
+                    <div className="space-y-2">
+                      {announcement.imageKeys.map((key, index) => (
+                        <Button key={key} variant="outline" size="sm" className="w-full justify-start text-xs">
+                          <Image className="h-3 w-3 mr-2" />
+                          Image {index + 1}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="w-full" size="sm">
+                    Share Announcement
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Share Announcement</DialogTitle>
+                    <DialogDescription>
+                      Share this announcement with others through various platforms
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ShareSocialCard
+                    title={announcement.title}
+                    description={typeof announcement.description === 'string' 
+                      ? announcement.description.substring(0, 100) + (announcement.description.length > 100 ? '...' : '')
+                      : 'Check out this announcement'}
+                    url={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/announcement/${announcement.slugId}`}
+                  />
+                </DialogContent>
+              </Dialog>
+              <Link 
+               href={"/dashboard/contact-support"}
+               className={buttonVariants({ variant: "outline", className: "w-full text-center" })}>
+                  Report Issue
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}

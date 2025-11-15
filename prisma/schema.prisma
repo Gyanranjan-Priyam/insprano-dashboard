@@ -1,0 +1,520 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String          @id
+  name            String
+  email           String
+  emailVerified   Boolean         @default(false)
+  image           String?
+  mobileNumber    String?
+  whatsappNumber  String?
+  profileImageKey String?
+  upiId           String?
+  aadhaarNumber   String?
+  state           String?
+  district        String?
+  collegeName     String?
+  collegeAddress  String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now()) @updatedAt
+  role            String?
+  banned          Boolean?        @default(false)
+  banReason       String?
+  banExpires      DateTime?
+  sessions        Session[]
+  accounts        Account[]
+  participations  Participation[]
+  accommodationBookings AccommodationBooking[]
+  supportTickets  SupportTicket[]
+  supportResponses SupportResponse[]
+  adminResponses  SupportResponse[] @relation("AdminResponses")
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}
+
+enum EventCategory {
+  Robosprano
+  Hackathon
+  OtherEvent
+  Civil
+  Mechanical
+  ComputerScience
+  Electrical
+  Gaming
+}
+
+enum EventPriceType {
+  free
+  paid
+}
+
+model Event {
+  id             String          @id @default(cuid())
+  title          String
+  slugId         String          @unique
+  description    String
+  rules          String
+  thumbnailKey   String
+  pdfKey         String
+  imageKeys      String[]        @default([])
+  priceType      EventPriceType  @default(free)
+  price          Int
+  venue          String
+  date           DateTime
+  category       EventCategory
+  teamSize       Int?            @default(4) // Maximum team members allowed for this event
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  participations Participation[]
+  teams          Team[]
+  announcements  Announcement[]
+
+  @@map("event")
+}
+
+enum ParticipationStatus {
+  REGISTERED
+  PENDING_PAYMENT
+  PAYMENT_SUBMITTED
+  CONFIRMED
+  CANCELLED
+}
+
+model Participation {
+  id           String              @id @default(cuid())
+  userId       String
+  eventId      String
+  status       ParticipationStatus @default(REGISTERED)
+  registeredAt DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  // User registration details
+  fullName       String
+  email          String
+  mobileNumber   String
+  whatsappNumber String?
+  aadhaarNumber  String
+  state          String
+  district       String
+  collegeName    String
+  collegeAddress String
+
+  // Payment details
+  paymentScreenshotKey String?
+  paymentSubmittedAt   DateTime?
+  paymentVerifiedAt    DateTime?
+  paymentAmount        Int?
+  transactionId        String?
+
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event        Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  teamLeader   Team[]            @relation("TeamLeader")
+  teamMember   TeamMember[]
+  joinRequests TeamJoinRequest[]
+
+  @@unique([userId, eventId])
+  @@map("participation")
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  name        String
+  slugId      String?  @unique
+  teamCode    String?  @unique
+  eventId     String
+  leaderId    String
+  description String?
+  maxMembers  Int      @default(4)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  event        Event             @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  leader       Participation     @relation("TeamLeader", fields: [leaderId], references: [id], onDelete: Cascade)
+  members      TeamMember[]
+  joinRequests TeamJoinRequest[]
+
+  @@unique([name, eventId])
+  @@map("team")
+}
+
+model TeamMember {
+  id            String   @id @default(cuid())
+  teamId        String
+  participantId String
+  joinedAt      DateTime @default(now())
+  isActive      Boolean  @default(true)
+
+  // Member profile information
+  fullName        String?
+  email           String?
+  mobileNumber    String?
+  whatsappNumber  String?
+  aadhaarNumber   String?
+  profileImageKey String?
+
+  // College information
+  collegeName    String?
+  collegeAddress String?
+  state          String?
+  district       String?
+  pinCode        String?
+
+  team        Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  participant Participation @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, participantId])
+  @@map("team_member")
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model TeamJoinRequest {
+  id            String            @id @default(cuid())
+  teamId        String
+  participantId String
+  status        JoinRequestStatus @default(PENDING)
+  message       String? // Optional message from the requester
+  requestedAt   DateTime          @default(now())
+  respondedAt   DateTime?
+  respondedBy   String? // Team leader who responded
+
+  // Additional participant details for the request
+  fullName       String
+  email          String
+  mobileNumber   String
+  whatsappNumber String?
+  aadhaarNumber  String
+  state          String
+  district       String
+  collegeName    String
+  collegeAddress String
+
+  team        Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  participant Participation @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, participantId])
+  @@map("team_join_request")
+}
+
+model AccommodationBooking {
+  id        String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User Details
+  name           String
+  mobileNumber   String
+  whatsappNumber String?
+  state          String
+  district       String
+  collegeName    String
+  collegeAddress String
+
+  // Stay Details
+  stayId           String
+  roomType         String
+  checkInDate      DateTime
+  checkOutDate     DateTime
+  numberOfNights   Int
+  totalStayPrice   Decimal
+
+  // Meal Details
+  selectedMeals    String[] // Array of meal IDs
+  totalMealPrice   Decimal
+
+  // Payment Details
+  totalPrice         Decimal
+  transactionId      String?
+  paymentScreenshot  String? // S3 URL
+  upiId             String?
+  paymentStatus     String @default("PENDING") // PENDING, VERIFIED, FAILED
+  verifiedAt        DateTime?
+  verifiedBy        String?
+
+  // Original Payment Tracking (for edit history)
+  originalTotalPrice      Decimal? // Original amount when first booked
+  originalTransactionId   String?  // Original transaction ID
+  originalPaymentScreenshot String? // Original payment screenshot
+  originalPaymentStatus   String?  // Original payment status
+  hasBeenModified        Boolean @default(false) // Track if booking was edited
+
+  // Booking Status
+  status String @default("CONFIRMED") // CONFIRMED, CANCELLED
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accommodation_booking")
+}
+
+model Stay {
+  id        String   @id @default(cuid())
+  imageKey  String
+  roomPrice Int
+  place     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("stay")
+}
+
+enum WeekDay {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+model Food {
+  id              String   @id @default(cuid())
+  weekDay         WeekDay
+  mealType        MealType
+  foodItems       String[] // Array of food items
+  imageKey        String
+  pricePerDay     Int      // Price for this meal on this day
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([weekDay, mealType])
+  @@map("food")
+}
+
+model SystemSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@map("system_settings")
+}
+
+enum SupportTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum SupportTicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model SupportTicket {
+  id          String                @id @default(cuid())
+  ticketNumber String               @unique
+  userId      String
+  name        String
+  email       String
+  mobileNumber String?
+  whatsappNumber String?
+  subject     String
+  message     String
+  status      SupportTicketStatus  @default(OPEN)
+  priority    SupportTicketPriority @default(MEDIUM)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  resolvedAt  DateTime?
+  
+  user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments SupportAttachment[]
+  responses   SupportResponse[]
+
+  @@map("support_ticket")
+}
+
+model SupportAttachment {
+  id        String   @id @default(cuid())
+  ticketId  String
+  fileName  String
+  fileKey   String   // S3 key for the uploaded file
+  fileSize  Int
+  mimeType  String
+  createdAt DateTime @default(now())
+  
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@map("support_attachment")
+}
+
+model SupportResponse {
+  id         String   @id @default(cuid())
+  ticketId   String
+  userId     String?  // null if admin response
+  adminId    String?  // null if user response
+  message    String
+  isInternal Boolean  @default(false) // Internal notes not visible to users
+  createdAt  DateTime @default(now())
+  
+  ticket      SupportTicket             @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user        User?                     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  admin       User?                     @relation("AdminResponses", fields: [adminId], references: [id], onDelete: SetNull)
+  attachments SupportResponseAttachment[]
+
+  @@map("support_response")
+}
+
+model SupportResponseAttachment {
+  id         String   @id @default(cuid())
+  responseId String
+  fileName   String
+  fileSize   Int
+  mimeType   String
+  fileKey    String   // S3 key for the file
+  createdAt  DateTime @default(now())
+
+  response   SupportResponse @relation(fields: [responseId], references: [id], onDelete: Cascade)
+
+  @@map("support_response_attachment")
+}
+
+enum AnnouncementCategory {
+  EMERGENCY
+  GENERAL
+  EVENT_UPDATE
+  WORKSHOP
+  LOGISTICS
+}
+
+enum AnnouncementPriority {
+  NORMAL
+  IMPORTANT
+  URGENT
+}
+
+enum AnnouncementAudience {
+  PUBLIC
+  PARTICIPANTS_ONLY
+  VOLUNTEERS_ONLY
+  ORGANIZERS_ONLY
+}
+
+enum RecurrenceType {
+  NONE
+  HOURLY
+  DAILY
+  WEEKLY
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  slugId      String   @unique
+  title       String
+  description String   // Rich text content
+  category    AnnouncementCategory
+  priority    AnnouncementPriority @default(NORMAL)
+  
+  // Optional related event
+  relatedEventId String?
+  relatedEvent   Event?  @relation(fields: [relatedEventId], references: [id], onDelete: SetNull)
+  
+  // Media & attachments
+  attachmentKeys String[] @default([]) // S3 keys for PDFs, documents
+  imageKeys      String[] @default([]) // S3 keys for images/posters
+  
+  // Visibility & control
+  audience           AnnouncementAudience @default(PUBLIC)
+  sendNotifications  Boolean             @default(false)
+  isPinned          Boolean             @default(false)
+  showInHomeBanner  Boolean             @default(false)
+  
+  // Scheduling
+  publishDate DateTime @default(now())
+  expiryDate  DateTime?
+  
+  // Recurring announcements
+  isRecurring     Boolean        @default(false)
+  recurrenceType  RecurrenceType @default(NONE)
+  recurrenceInterval Int?        // For custom intervals (e.g., every 2 hours)
+  lastRecurrenceRun DateTime?    // Track last time recurring announcement was processed
+  
+  // Metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String   // Admin user ID who created this
+  
+  // Soft delete
+  isDeleted Boolean @default(false)
+  deletedAt DateTime?
+  
+  @@map("announcement")
+}
