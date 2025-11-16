@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
-import { Calendar, Clock, FileText, Image, AlertCircle, Info, TrendingUp, Users } from "lucide-react";
+import { Calendar, Clock, FileText, Image, AlertCircle, Info, TrendingUp, Users, EyeIcon } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -333,7 +333,7 @@ export function AnnouncementClient({ announcement }: { announcement: Announcemen
                             onClick={() => openViewer(key, index, false)}
                           >
                             <span className="hidden sm:inline">View</span>
-                            <span className="sm:hidden">👁️</span>
+                            <span className="sm:hidden"><EyeIcon size={3}/></span>
                           </Button>
                         </div>
                       ))}
@@ -365,7 +365,7 @@ export function AnnouncementClient({ announcement }: { announcement: Announcemen
                             onClick={() => openViewer(key, index, true)}
                           >
                             <span className="hidden sm:inline">View</span>
-                            <span className="sm:hidden">👁️</span>
+                            <span className="sm:hidden"><EyeIcon size={3}/></span>
                           </Button>
                         </div>
                       ))}
