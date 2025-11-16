@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, Mail, Twitter, Instagram, Facebook, Copy, Check, ExternalLink } from "lucide-react";
+import { Mail, Twitter, Instagram, Facebook, Copy, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { FaWhatsapp } from "react-icons/fa";
 
 interface ShareSocialCardProps {
   title: string;
@@ -78,7 +79,7 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
               onClick={shareToWhatsApp}
               className="flex items-center gap-2 justify-start text-left h-10 cursor-pointer"
             >
-              <MessageCircle className="h-4 w-4 text-green-600" />
+              <FaWhatsapp className="h-4 w-4 text-green-600" />
               <span className="text-sm">WhatsApp</span>
             </Button>
 
@@ -179,7 +180,7 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
             onClick={shareToWhatsApp}
             className="flex-1 cursor-pointer"
           >
-            <MessageCircle className="h-4 w-4 mr-2" />
+            <FaWhatsapp className="h-4 w-4 mr-2" />
             Share via WhatsApp
           </Button>
           <Button
