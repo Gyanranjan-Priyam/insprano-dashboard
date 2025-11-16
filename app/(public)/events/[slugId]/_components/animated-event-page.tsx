@@ -10,6 +10,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { RenderDescription } from "@/components/admin_components/rich-text-editor/RenderDescription";
 import { CalendarIcon, TagIcon, FileTextIcon, ImageIcon, UsersIcon, IndianRupee, ChevronLeftIcon, ChevronRightIcon, PlayIcon, PauseIcon } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 // Animation variants
 const fadeInUp = {
@@ -105,6 +107,22 @@ export function AnimatedEventPage({ event }: AnimatedEventPageProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
+  const router = useRouter();
+  
+  // Get current session data
+  const { data: session } = authClient.useSession();
+  
+  // Handle registration click with authentication check
+  const handleRegistrationClick = () => {
+    if (!session?.user) {
+      // Redirect to login with return URL
+      const returnUrl = window.location.href;
+      router.push(`/login?returnUrl=${encodeURIComponent(returnUrl)}&register=true&eventId=${event.slugId}`);
+    } else {
+      // User is logged in, proceed to registration
+      router.push(`/dashboard/participate/${event.slugId}`);
+    }
+  };
   
   // Combine thumbnail and gallery images
   const allImages = [
@@ -514,13 +532,20 @@ export function AnimatedEventPage({ event }: AnimatedEventPageProps) {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Button size="lg" className="w-full cursor-pointer">
+                      <Button 
+                        size="lg" 
+                        className="w-full cursor-pointer"
+                        onClick={handleRegistrationClick}
+                      >
                         <UsersIcon className="w-4 h-4 mr-2" />
-                        Register Now
+                        {!session?.user ? "Login to Register" : "Register Now"}
                       </Button>
                     </motion.div>
                     <p className="text-xs text-center text-muted-foreground">
-                      Registration closes on event date
+                      {!session?.user 
+                        ? "You'll be redirected to login first" 
+                        : "Registration closes on event date"
+                      }
                     </p>
                   </CardContent>
                 </motion.div>

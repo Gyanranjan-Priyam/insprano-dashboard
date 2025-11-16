@@ -6,6 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -18,9 +26,12 @@ import {
   ImageIcon,
   UsersIcon,
   IndianRupee,
+  Share2,
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { ImageCarousel } from "./_components/ImageCarousel";
+import { ShareSocialCard } from "./_components/share-social-card";
+import { getAbsoluteUrl } from "@/lib/utils/get-base-url";
 
 // Helper function to construct full URL
 const getFileUrl = (key: string) => {
@@ -111,7 +122,7 @@ export default async function PublicEventPage({
                 <div className="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-lg border border-white/30">
                   <IndianRupee className="w-5 h-5 text-white" />
                   <span className="text-2xl font-bold text-white">
-                    {(event.priceType === "free" || event.price === 0) ? "Free" : `$${event.price}`}
+                    {(event.priceType === "free" || event.price === 0) ? "Free" : `${event.price}`}
                   </span>
                   <span className="text-sm text-white/80">
                     Registration Fee
@@ -249,6 +260,32 @@ export default async function PublicEventPage({
                       Register
                     </Link>
                   </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full cursor-pointer">
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Share Event
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-sm sm:max-w-md mx-4">
+                      <DialogHeader>
+                        <DialogTitle className="text-base sm:text-lg">Share Event</DialogTitle>
+                        <DialogDescription className="text-xs sm:text-sm">
+                          Share "{event.title}" with your friends and colleagues
+                        </DialogDescription>
+                      </DialogHeader>
+                      <ShareSocialCard
+                        title={event.title}
+                        description={`Join us for ${event.title} on ${new Date(event.date).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}. ${(event.priceType === "free" || event.price === 0) ? "Free registration!" : `Registration fee: ₹${event.price}`}`}
+                        url={getAbsoluteUrl(`/events/${event.slugId}`)}
+                      />
+                    </DialogContent>
+                  </Dialog>
                   <p className="text-xs text-center text-muted-foreground">
                     Registration closes on event date
                   </p>
