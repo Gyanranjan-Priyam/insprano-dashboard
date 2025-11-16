@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, Accept } from 'react-dropzone';
 import { Card, CardContent } from '../ui/card';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
-import { CloudUploadIcon, EyeIcon, ImageIcon, Loader2, TrashIcon, XIcon } from 'lucide-react';
+import { CloudUploadIcon, EyeIcon, ImageIcon, Loader2, TrashIcon, XIcon, FileTextIcon, FileIcon } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Progress } from '../ui/progress';
 import Image from 'next/image';
@@ -17,6 +17,8 @@ interface MultipleUploaderProps {
     disabled?: boolean;
     maxFiles?: number;
     minFiles?: number;
+    accept?: 'images' | 'documents' | 'mixed';
+    maxFileSize?: number; // in MB
 }
 
 interface UploadingFile {
@@ -31,9 +33,73 @@ export function MultipleUploader({
     onChange, 
     disabled = false, 
     maxFiles = 10, 
-    minFiles = 1 
+    minFiles = 1,
+    accept = 'images',
+    maxFileSize = 10
 }: MultipleUploaderProps) {
     const [uploadingFiles, setUploadingFiles] = useState<UploadingFile[]>([]);
+
+    // Define accepted file types based on accept prop
+    const getAcceptedTypes = (): Accept => {
+        switch (accept) {
+            case 'images':
+                return { 
+                    'image/jpeg': ['.jpg', '.jpeg'], 
+                    'image/png': ['.png'],
+                    'image/gif': ['.gif'],
+                    'image/webp': ['.webp']
+                };
+            case 'documents':
+                return { 
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+                    'application/vnd.ms-excel': ['.xls'],
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                    'application/vnd.ms-powerpoint': ['.ppt'],
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+                    'text/plain': ['.txt'],
+                    'text/csv': ['.csv']
+                };
+            case 'mixed':
+                return {
+                    'image/jpeg': ['.jpg', '.jpeg'], 
+                    'image/png': ['.png'],
+                    'image/gif': ['.gif'],
+                    'image/webp': ['.webp'],
+                    'application/pdf': ['.pdf'],
+                    'application/msword': ['.doc'],
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+                    'text/plain': ['.txt']
+                };
+            default:
+                return { 
+                    'image/jpeg': ['.jpg', '.jpeg'], 
+                    'image/png': ['.png'] 
+                };
+        }
+    };
+
+    const getFileTypeLabels = () => {
+        switch (accept) {
+            case 'images':
+                return 'JPG, PNG, GIF, WEBP';
+            case 'documents':
+                return 'PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, CSV';
+            case 'mixed':
+                return 'Images (JPG, PNG, GIF, WEBP) and Documents (PDF, DOC, TXT)';
+            default:
+                return 'JPG, PNG';
+        }
+    };
+
+    const isImageFile = (file: File) => {
+        return file.type.startsWith('image/');
+    };
+
+    const isPdfFile = (file: File) => {
+        return file.type === 'application/pdf';
+    };
 
     const uploadFile = useCallback(async (file: File) => {
         const uploadId = Math.random().toString(36).substring(7);
@@ -58,8 +124,8 @@ export function MultipleUploader({
                     fileName: file.name,
                     contentType: file.type,
                     size: file.size,
-                    isImage: true,
-                    isPdf: false,
+                    isImage: isImageFile(file),
+                    isPdf: isPdfFile(file),
                 })
             });
 
@@ -121,7 +187,8 @@ export function MultipleUploader({
         const remainingSlots = maxFiles - currentTotal;
         
         if (remainingSlots <= 0) {
-            toast.error(`Maximum ${maxFiles} images allowed`);
+            const fileTypeLabel = accept === 'images' ? 'images' : accept === 'documents' ? 'files' : 'files';
+            toast.error(`Maximum ${maxFiles} ${fileTypeLabel} allowed`);
             return;
         }
         
@@ -140,19 +207,19 @@ export function MultipleUploader({
         if (rejectedFiles.length > 0) {
             const errors = rejectedFiles[0].errors;
             if (errors.some((e: any) => e.code === 'file-invalid-type')) {
-                toast.error('Please upload valid image files (JPG/PNG)');
+                toast.error(`Please upload valid files (${getFileTypeLabels()})`);
             } else if (errors.some((e: any) => e.code === 'file-too-large')) {
-                toast.error('File is too large. Maximum size is 10MB');
+                toast.error(`File is too large. Maximum size is ${maxFileSize}MB`);
             }
         }
-    }, []);
+    }, [maxFileSize]);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         onDropRejected,
-        accept: { 'image/jpeg': ['.jpg', '.jpeg'], 'image/png': ['.png'] },
+        accept: getAcceptedTypes(),
         maxFiles: maxFiles - value.length - uploadingFiles.length,
-        maxSize: 10 * 1024 * 1024, // 10MB
+        maxSize: maxFileSize * 1024 * 1024, // Convert MB to bytes
         disabled: disabled || (value.length + uploadingFiles.length) >= maxFiles,
         multiple: true,
     });
@@ -200,23 +267,34 @@ export function MultipleUploader({
                     <CardContent className="p-4 sm:p-6">
                         <input {...getInputProps()} />
                         <div className="flex flex-col items-center text-center space-y-3 sm:space-y-4">
-                            <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                            {accept === 'images' ? (
+                                <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                            ) : accept === 'documents' ? (
+                                <FileTextIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                            ) : (
+                                <FileIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+                            )}
                             <div>
                                 <p className="text-xs sm:text-sm font-medium">
-                                    Drop images here or click to browse
+                                    {accept === 'images' 
+                                        ? 'Drop images here or click to browse'
+                                        : accept === 'documents'
+                                        ? 'Drop documents here or click to browse'
+                                        : 'Drop files here or click to browse'
+                                    }
                                 </p>
                                 <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">
-                                    {value.length}/{maxFiles} images • Supports JPG, PNG (max 10MB each)
+                                    {value.length}/{maxFiles} files • Supports {getFileTypeLabels()} (max {maxFileSize}MB each)
                                 </p>
                                 {!hasMinimumFiles && (
                                     <p className="text-[10px] sm:text-xs text-destructive mt-1">
-                                        Minimum {minFiles} image{minFiles > 1 ? 's' : ''} required
+                                        Minimum {minFiles} file{minFiles > 1 ? 's' : ''} required
                                     </p>
                                 )}
                             </div>
                             <Button type="button" variant="outline" size="sm" className="text-xs sm:text-sm">
                                 <CloudUploadIcon className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
-                                Choose Images
+                                {accept === 'images' ? 'Choose Images' : accept === 'documents' ? 'Choose Documents' : 'Choose Files'}
                             </Button>
                         </div>
                     </CardContent>
@@ -231,14 +309,18 @@ export function MultipleUploader({
                         <Card key={uploadingFile.id}>
                             <CardContent className="p-3 sm:p-4">
                                 <div className="flex items-center space-x-3">
-                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded overflow-hidden shrink-0">
-                                        <Image
-                                            src={uploadingFile.previewUrl}
-                                            alt="Uploading..."
-                                            fill
-                                            className="object-cover"
-                                            priority
-                                        />
+                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded overflow-hidden shrink-0 flex items-center justify-center bg-muted">
+                                        {isImageFile(uploadingFile.file) ? (
+                                            <Image
+                                                src={uploadingFile.previewUrl}
+                                                alt="Uploading..."
+                                                fill
+                                                className="object-cover"
+                                                priority
+                                            />
+                                        ) : (
+                                            <FileTextIcon className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground" />
+                                        )}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-xs sm:text-sm font-medium truncate">{uploadingFile.file.name}</p>
@@ -255,49 +337,76 @@ export function MultipleUploader({
                 </div>
             )}
 
-            {/* Uploaded Images */}
             {value.length > 0 && (
                 <div className="space-y-2">
                     <p className="text-xs sm:text-sm font-medium">
-                        Uploaded Images ({value.length}/{maxFiles})
+                        Uploaded Files ({value.length}/{maxFiles})
                     </p>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-4">
                         {value.map((key, index) => {
                             const fileUrl = getFileUrl(key);
+                            const fileName = key.split('/').pop() || `File ${index + 1}`;
+                            const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+                            const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
+                            
                             return (
                                 <Card key={key} className="relative group">
                                     <CardContent className="p-1 sm:p-2">
                                         <div className="relative aspect-square rounded overflow-hidden">
-                                            <Image
-                                                src={fileUrl}
-                                                alt={`Uploaded image ${index + 1}`}
-                                                fill
-                                                className="object-cover"
-                                                priority
-                                            />
+                                            {isImage ? (
+                                                <Image
+                                                    src={fileUrl}
+                                                    alt={`Uploaded file ${index + 1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    priority
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full bg-muted flex flex-col items-center justify-center p-2">
+                                                    <FileTextIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mb-1" />
+                                                    <p className="text-[8px] sm:text-[10px] text-center text-muted-foreground uppercase font-medium">
+                                                        {fileExtension}
+                                                    </p>
+                                                    <p className="text-[6px] sm:text-[8px] text-center text-muted-foreground truncate w-full mt-1">
+                                                        {fileName.length > 15 ? fileName.substring(0, 12) + '...' : fileName}
+                                                    </p>
+                                                </div>
+                                            )}
                                             
                                             {/* Overlay with actions */}
                                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-1 sm:space-x-2">
                                                 {/* Preview Button */}
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button type="button" variant="secondary" size="icon" className="h-6 w-6 sm:h-8 sm:w-8">
-                                                            <EyeIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" side="top">
-                                                        <div className="relative">
-                                                            <Image
-                                                                src={fileUrl}
-                                                                alt="Image preview"
-                                                                width={300}
-                                                                height={200}
-                                                                className="object-contain rounded-md max-w-[90vw] h-auto"
-                                                                priority
-                                                            />
-                                                        </div>
-                                                    </PopoverContent>
-                                                </Popover>
+                                                {isImage ? (
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <Button type="button" variant="secondary" size="icon" className="h-6 w-6 sm:h-8 sm:w-8">
+                                                                <EyeIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                            </Button>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-auto p-0" side="top">
+                                                            <div className="relative">
+                                                                <Image
+                                                                    src={fileUrl}
+                                                                    alt="File preview"
+                                                                    width={300}
+                                                                    height={200}
+                                                                    className="object-contain rounded-md max-w-[90vw] h-auto"
+                                                                    priority
+                                                                />
+                                                            </div>
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                ) : (
+                                                    <Button 
+                                                        type="button" 
+                                                        variant="secondary" 
+                                                        size="icon" 
+                                                        className="h-6 w-6 sm:h-8 sm:w-8"
+                                                        onClick={() => window.open(fileUrl, '_blank')}
+                                                    >
+                                                        <EyeIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                    </Button>
+                                                )}
                                                 
                                                 {/* Remove Button */}
                                                 <Button
@@ -319,12 +428,18 @@ export function MultipleUploader({
                 </div>
             )}
 
-            {/* Empty state when no images */}
+            {/* Empty state when no files */}
             {value.length === 0 && uploadingFiles.length === 0 && !canUploadMore && (
                 <Card>
                     <CardContent className="p-4 sm:p-6 text-center">
-                        <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-xs sm:text-sm text-muted-foreground">No images uploaded</p>
+                        {accept === 'images' ? (
+                            <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mx-auto mb-2" />
+                        ) : (
+                            <FileTextIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground mx-auto mb-2" />
+                        )}
+                        <p className="text-xs sm:text-sm text-muted-foreground">
+                            {accept === 'images' ? 'No images uploaded' : 'No files uploaded'}
+                        </p>
                     </CardContent>
                 </Card>
             )}

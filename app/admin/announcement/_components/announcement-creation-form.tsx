@@ -304,6 +304,8 @@ export function AnnouncementCreationForm({
                         value={field.value}
                         maxFiles={10}
                         minFiles={0}
+                        accept="documents"
+                        maxFileSize={10}
                       />
                     </FormControl>
                     <FormMessage />
@@ -326,6 +328,8 @@ export function AnnouncementCreationForm({
                         value={field.value}
                         maxFiles={5}
                         minFiles={0}
+                        accept="images"
+                        maxFileSize={5}
                       />
                     </FormControl>
                     <FormMessage />

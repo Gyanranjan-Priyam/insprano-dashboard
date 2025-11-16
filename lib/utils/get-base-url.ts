@@ -1,7 +1,7 @@
 /**
  * Get the base URL for the application
  * This handles different environments properly:
- * - Production: Uses VERCEL_URL or NEXT_PUBLIC_BASE_URL
+ * - Production: Uses custom domain or VERCEL_URL
  * - Development: Falls back to localhost:3000
  */
 export function getBaseUrl(): string {
@@ -10,10 +10,11 @@ export function getBaseUrl(): string {
     return process.env.NEXT_PUBLIC_BASE_URL;
   }
   
-  // On Vercel, use the VERCEL_URL
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
+  // For production, use the custom domain
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://registration-insprano.vercel.app';
   }
+  
   
   // For development
   return 'http://localhost:3000';

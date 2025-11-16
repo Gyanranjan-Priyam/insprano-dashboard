@@ -224,6 +224,8 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
                 value={attachmentKeys}
                 maxFiles={10}
                 minFiles={0}
+                accept="documents"
+                maxFileSize={10}
               />
             </div>
 
@@ -239,6 +241,8 @@ export default function AnnouncementEditForm({ announcement, events }: Announcem
                 value={imageKeys}
                 maxFiles={5}
                 minFiles={0}
+                accept="images"
+                maxFileSize={5}
               />
             </div>
           </CardContent>
