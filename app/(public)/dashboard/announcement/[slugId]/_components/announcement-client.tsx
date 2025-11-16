@@ -170,7 +170,7 @@ export function AnnouncementClient({ announcement }: { announcement: Announcemen
                 <Badge variant="outline" className={`text-xs ${priorityStyle.badge} flex items-center gap-1`}>
                   <PriorityIcon className="h-3 w-3" />
                   <span className="hidden xs:inline">{announcement.priority}</span>
-                  <span className="xs:hidden">{announcement.priority.charAt(0)}</span>
+                  <span className="xs:hidden">{announcement.priority}</span>
                 </Badge>
                 <Badge variant="secondary" className="text-xs">
                   <span className="hidden sm:inline">{getCategoryDisplay(announcement.category)}</span>
