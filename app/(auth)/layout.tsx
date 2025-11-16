@@ -1,7 +1,8 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, School } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -17,8 +18,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <div className="flex w-full max-w-lg flex-col gap-6">
 
             <Link href="/" className="flex items-center gap-2 self-center font-medium">
-                {/* <Image src="/logo.png" alt="Logo" width={32} height={32} /> */}
-                <span className="text-3xl text-center flex items-center"><School className="size-8 mr-4"/>INSPRANO</span>
+                <span className="text-3xl text-center flex items-center">
+                    <Image
+                        src="/assets/logo.png"
+                        alt="INSPRANO Logo"
+                        width={64}
+                        height={64}
+                        className="mr-4"
+                        priority
+                    />
+                    INSPRANO - {new Date().getFullYear()}
+                </span>
             </Link>    
                 {children}
                 <div className="text-balance text-center text-xs text-muted-foreground">
