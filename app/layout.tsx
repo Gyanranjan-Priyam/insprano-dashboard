@@ -22,6 +22,14 @@ export const metadata: Metadata = {
     default: "INSPRANO 2025 - Registration Portal"
   },
   description: "Official registration portal for INSPRANO 2025, Government College of Engineering Kalahandi",
+  icons: {
+    icon: [
+      { url: "/assets/logo.png", sizes: "32x32", type: "image/png" },
+      { url: "/assets/logo.png", sizes: "16x16", type: "image/png" }
+    ],
+    apple: "/assets/logo.png",
+    shortcut: "/assets/logo.png"
+  }
 };
 
 export default function RootLayout({
