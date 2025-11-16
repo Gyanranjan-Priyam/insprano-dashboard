@@ -6,7 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Loader, Loader2, Send } from "lucide-react";
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaGoogle } from "react-icons/fa";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ export function LoginForm() {
     const router = useRouter();
     const [githubPending, startGithubTransition] = useTransition();
     const [googlePending, startGoogleTransition] = useTransition();
+    const [discordPending, startDiscordTransition] = useTransition();
     const [emailPending, startEmailTransition] = useTransition();
 
     const [email, setEmail] = useState("");
@@ -52,6 +53,22 @@ export function LoginForm() {
             });
         })
     }
+    async function signInWithDiscord() {
+        startDiscordTransition(async() => {
+            await authClient.signIn.social({
+                provider: "discord",
+                callbackURL: "/auth/callback",
+                fetchOptions: {
+                    onSuccess: () => {
+                        toast.success("Successfully signed in with Github!");
+                    },
+                    onError: () => {
+                        toast.error("Internal Server Error");
+                    },
+                },
+            });
+        })
+    }
     function signInWithEmail() {
         startEmailTransition(async() => {
             await authClient.emailOtp.sendVerificationOtp({
@@ -77,7 +94,7 @@ export function LoginForm() {
                 <CardDescription>Login to your account to complete the full registration.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-                <Button disabled={githubPending} onClick={signInWithGithub} variant="outline">
+                <Button disabled={githubPending} onClick={signInWithGithub} variant="outline" className="cursor-pointer">
                     {githubPending ? (
                         <>
                             <Loader className="size-4 animate-spin"/>
@@ -90,7 +107,7 @@ export function LoginForm() {
                         </>
                     )}
                 </Button>
-                <Button disabled={googlePending} onClick={signInWithGoogle} variant="outline">
+                <Button disabled={googlePending} onClick={signInWithGoogle} variant="outline" className="cursor-pointer">
                     {googlePending ? (
                         <>
                             <Loader className="size-4 animate-spin"/>
@@ -100,6 +117,19 @@ export function LoginForm() {
                         <>
                             <FaGoogle className="size-4" />
                             Sign In with Google
+                        </>
+                    )}
+                </Button>
+                <Button disabled={discordPending} onClick={signInWithDiscord} variant="outline" className="cursor-pointer">
+                    {discordPending ? (
+                        <>
+                            <Loader className="size-4 animate-spin"/>
+                            <span>Signing In...</span>
+                        </>
+                    ) : (
+                        <>
+                            <FaDiscord className="size-4" />
+                            Sign In with Discord
                         </>
                     )}
                 </Button>
@@ -116,7 +146,7 @@ export function LoginForm() {
                         <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" required />
                     </div>
 
-                    <Button onClick={signInWithEmail} disabled={emailPending}>
+                    <Button onClick={signInWithEmail} disabled={emailPending} className="cursor-pointer">
                         {emailPending ? (
                             <>
                                 <Loader2 className="size-4 animate-spin"/>

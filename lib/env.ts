@@ -13,6 +13,8 @@ export const env = createEnv({
     AUTH_GITHUB_CLIENT_SECRET: z.string().min(1),
     AUTH_GOOGLE_CLIENT_ID: z.string().min(1),
     AUTH_GOOGLE_CLIENT_SECRET: z.string().min(1),
+    AUTH_DISCORD_CLIENT_ID: z.string().min(1),
+    AUTH_DISCORD_CLIENT_SECRET: z.string().min(1),
     ARCJET_KEY: z.string().min(1),
     AWS_ACCESS_KEY_ID: z.string().min(1),
     AWS_SECRET_ACCESS_KEY: z.string().min(1),

@@ -22,6 +22,11 @@ export const auth = betterAuth({
             clientId: env.AUTH_GOOGLE_CLIENT_ID,
             clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
         },
+        discord: {
+            clientId: env.AUTH_DISCORD_CLIENT_ID,
+            clientSecret: env.AUTH_DISCORD_CLIENT_SECRET,
+            permissions: 2048 | 16384, // Send Messages + Embed Links
+        }
     },
 
     plugins: [

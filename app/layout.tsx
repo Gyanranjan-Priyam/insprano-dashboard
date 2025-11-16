@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Grenze, Nova_Square } from "next/font/google";
+import { Grenze, Nova_Square } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 
