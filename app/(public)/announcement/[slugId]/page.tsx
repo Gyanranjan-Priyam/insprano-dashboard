@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { RenderDescription } from "@/components/admin_components/rich-text-editor/RenderDescription";
 import { type JSONContent } from "@tiptap/react";
+import { prisma } from "@/lib/db";
 
 interface AnnouncementData {
   id: string;
@@ -30,19 +31,48 @@ interface AnnouncementData {
   createdBy: string;
 }
 
-// Fetch announcement data
+// Fetch announcement data directly from database
 async function getAnnouncement(slugId: string): Promise<AnnouncementData | null> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/announcements/${slugId}`, {
-      cache: 'no-store' // Ensure fresh data
+    const announcement = await prisma.announcement.findUnique({
+      where: { slugId },
+      include: {
+        relatedEvent: {
+          select: {
+            id: true,
+            title: true,
+            slugId: true,
+            description: true,
+            date: true,
+          }
+        }
+      }
     });
-    
-    if (!response.ok) {
+
+    if (!announcement) {
       return null;
     }
-    
-    const data = await response.json();
-    return data.success ? data.data : null;
+
+    return {
+      id: announcement.id,
+      slugId: announcement.slugId,
+      title: announcement.title,
+      description: announcement.description as JSONContent | string,
+      category: announcement.category,
+      priority: announcement.priority as "LOW" | "NORMAL" | "HIGH" | "URGENT",
+      createdAt: announcement.createdAt.toISOString(),
+      updatedAt: announcement.updatedAt.toISOString(),
+      attachmentKeys: announcement.attachmentKeys || [],
+      imageKeys: announcement.imageKeys || [],
+      relatedEvent: announcement.relatedEvent ? {
+        id: announcement.relatedEvent.id,
+        title: announcement.relatedEvent.title,
+        slugId: announcement.relatedEvent.slugId,
+        description: announcement.relatedEvent.description,
+        date: announcement.relatedEvent.date.toISOString(),
+      } : undefined,
+      createdBy: announcement.createdBy,
+    };
   } catch (error) {
     console.error('Error fetching announcement:', error);
     return null;
