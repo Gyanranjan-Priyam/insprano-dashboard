@@ -10,10 +10,7 @@ export function getBaseUrl(): string {
     return process.env.NEXT_PUBLIC_BASE_URL;
   }
   
-  // On Vercel, use the VERCEL_URL
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
+
   
   // For development
   return 'http://localhost:3000';
