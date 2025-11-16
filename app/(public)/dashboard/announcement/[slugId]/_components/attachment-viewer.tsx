@@ -129,6 +129,12 @@ export function AttachmentViewer({
   const [attachmentUrl, setAttachmentUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [windowHeight, setWindowHeight] = useState(800); // Default height
+  const [imageDimensions, setImageDimensions] = useState<{
+    width: number;
+    height: number;
+    aspectRatio: number;
+  }>({ width: 0, height: 0, aspectRatio: 1 });
   const [fileInfo, setFileInfo] = useState<{
     name: string;
     type: string;
@@ -138,6 +144,16 @@ export function AttachmentViewer({
     type: "unknown",
     extension: ""
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setWindowHeight(window.innerHeight);
+      
+      const handleResize = () => setWindowHeight(window.innerHeight);
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen && attachmentKey) {
@@ -193,54 +209,83 @@ export function AttachmentViewer({
   };
 
   const getDialogSize = () => {
-    // Mobile-first approach - full width on mobile, responsive on desktop
-    const defaultSize = "w-full sm:w-[600px] sm:max-w-[90vw]";
-    
+    // Mobile-first approach with content-aware sizing
     if (isLoading || error) {
-      return defaultSize;
+      return "w-full sm:w-[500px] sm:max-w-[85vw]";
     }
     
     switch (fileInfo.type) {
       case 'image':
-        return "w-full sm:w-auto sm:max-w-[85vw] sm:min-w-[500px]";
+        // Images need flexible sizing based on content
+        return "w-full sm:w-auto sm:max-w-[90vw] sm:min-w-[400px] md:min-w-[600px]";
+      
       case 'pdf':
-        return "w-full sm:w-[900px] sm:max-w-[95vw] sm:min-w-[700px]";
+        // PDFs need more width for readability
+        return "w-full sm:w-[95vw] sm:max-w-[1200px] sm:min-w-[800px]";
+      
       case 'video':
-        return "w-full sm:w-[800px] sm:max-w-[90vw] sm:min-w-[600px]";
+        // Videos need aspect ratio consideration
+        return "w-full sm:w-[90vw] sm:max-w-[1000px] sm:min-w-[600px]";
+      
       case 'audio':
-        return "w-full sm:w-[500px] sm:max-w-[85vw] sm:min-w-[400px]";
+        // Audio files need less space
+        return "w-full sm:w-[400px] sm:max-w-[500px]";
+      
       case 'text':
-        return "w-full sm:w-[700px] sm:max-w-[88vw] sm:min-w-[550px]";
+        // Text files need reading width
+        return "w-full sm:w-[80vw] sm:max-w-[900px] sm:min-w-[600px]";
+      
       case 'document':
-        return "w-full sm:w-[750px] sm:max-w-[90vw] sm:min-w-[600px]";
+        // Office documents need generous width
+        return "w-full sm:w-[90vw] sm:max-w-[1100px] sm:min-w-[700px]";
+      
       default:
-        return defaultSize;
+        // Unknown files - conservative sizing
+        return "w-full sm:w-[70vw] sm:max-w-[600px] sm:min-w-[400px]";
     }
   };
 
   const getDialogHeight = () => {
-    // Mobile-first approach - full height on mobile, responsive on desktop
-    const defaultHeight = "h-full sm:h-[400px] sm:max-h-[80vh]";
-    
+    // Mobile-first approach with content-aware height
     if (isLoading || error) {
-      return defaultHeight;
+      return "h-full sm:h-[50vh] sm:max-h-[600px] sm:min-h-[300px]";
     }
     
     switch (fileInfo.type) {
       case 'image':
-        return "h-full sm:h-auto sm:max-h-[85vh] sm:min-h-[300px]";
+        // Images - adaptive height based on actual image dimensions
+        if (imageDimensions.height > 0) {
+          const maxMobileHeight = windowHeight - 100; // Account for header
+          const maxDesktopHeight = windowHeight * 0.85; // 85% of viewport
+          const calculatedHeight = Math.min(imageDimensions.height + 120, maxMobileHeight); // +120 for header/padding
+          
+          return `h-auto max-h-[${calculatedHeight}px] sm:max-h-[${maxDesktopHeight}px] min-h-[250px]`;
+        }
+        return "h-auto max-h-[85vh] sm:min-h-[300px]";
+      
       case 'pdf':
-        return "h-full sm:h-[90vh] sm:min-h-[600px]";
+        // PDFs need maximum height for document viewing
+        return "h-full sm:h-[95vh] sm:max-h-[95vh] sm:min-h-[600px]";
+      
       case 'video':
+        // Videos need height for controls and aspect ratio
         return "h-full sm:h-auto sm:max-h-[80vh] sm:min-h-[400px]";
+      
       case 'audio':
-        return "h-full sm:h-[300px] sm:max-h-[50vh]";
+        // Audio files need minimal height - just controls
+        return "h-auto sm:h-[250px] max-h-[50vh] min-h-[200px]";
+      
       case 'text':
-        return "h-full sm:h-[70vh] sm:max-h-[80vh] sm:min-h-[500px]";
+        // Text files need reading height
+        return "h-full sm:h-[80vh] sm:max-h-[80vh] sm:min-h-[500px]";
+      
       case 'document':
-        return "h-full sm:h-[75vh] sm:max-h-[85vh] sm:min-h-[550px]";
+        // Office documents need generous height
+        return "h-full sm:h-[90vh] sm:max-h-[90vh] sm:min-h-[600px]";
+      
       default:
-        return defaultHeight;
+        // Unknown files - show as preview with download option
+        return "h-auto sm:h-[40vh] max-h-[60vh] min-h-[250px]";
     }
   };
 
@@ -289,21 +334,34 @@ export function AttachmentViewer({
     switch (fileInfo.type) {
       case 'image':
         return (
-          <div className="flex justify-center items-center min-h-[200px] p-2 sm:p-0">
+          <div className="flex justify-center items-center min-h-[150px] sm:min-h-[200px] p-2 sm:p-0">
             <img 
               src={attachmentUrl} 
               alt={fileInfo.name}
-              className="max-w-full max-h-[calc(100vh-120px)] sm:max-h-[calc(85vh-120px)] object-contain rounded-md shadow-sm"
+              className="max-w-full h-auto object-contain rounded-md shadow-sm"
               onError={() => setError('Failed to load image')}
+              onLoad={(e) => {
+                const img = e.target as HTMLImageElement;
+                setImageDimensions({
+                  width: img.naturalWidth,
+                  height: img.naturalHeight,
+                  aspectRatio: img.naturalWidth / img.naturalHeight
+                });
+              }}
+              style={{
+                maxHeight: imageDimensions.height > 0 
+                  ? `${Math.min(imageDimensions.height, windowHeight - 120)}px`
+                  : 'calc(100vh - 120px)',
+              }}
             />
           </div>
         );
       
       case 'pdf':
         return (
-          <div className="h-[calc(100vh-120px)] sm:h-[calc(90vh-120px)]">
+          <div className="h-[calc(100vh-80px)] sm:h-[calc(90vh-120px)]">
             <iframe 
-              src={attachmentUrl}
+              src={`${attachmentUrl}#view=FitH`} // Add PDF view parameter for better mobile viewing
               className="w-full h-full rounded-md border border-border"
               title={fileInfo.name}
             />
@@ -312,12 +370,16 @@ export function AttachmentViewer({
       
       case 'video':
         return (
-          <div className="flex justify-center items-center p-2 sm:p-0">
+          <div className="flex justify-center items-center p-1 sm:p-0">
             <video 
               controls 
-              className="w-full max-h-[calc(100vh-120px)] sm:max-h-[calc(80vh-120px)] rounded-md shadow-sm"
+              className="w-full h-auto max-h-[calc(100vh-100px)] sm:max-h-[calc(80vh-120px)] rounded-md shadow-sm"
               src={attachmentUrl}
               preload="metadata"
+              style={{
+                aspectRatio: '16/9', // Default aspect ratio
+                maxHeight: 'calc(100vh - 100px)',
+              }}
             >
               Your browser does not support the video tag.
             </video>
@@ -326,28 +388,32 @@ export function AttachmentViewer({
       
       case 'audio':
         return (
-          <div className="flex flex-col items-center justify-center py-8 sm:py-12 space-y-4 sm:space-y-6 px-4">
+          <div className="flex flex-col items-center justify-center py-6 sm:py-12 space-y-3 sm:space-y-6 px-4">
             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <FileAudio className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             </div>
-            <div className="text-center space-y-2">
-              <h3 className="font-medium text-sm hyphens-auto">{fileInfo.name}</h3>
+            <div className="text-center space-y-2 max-w-full">
+              <h3 className="font-medium text-sm sm:text-base hyphens-auto px-2 break-all">
+                {fileInfo.name}
+              </h3>
               <p className="text-xs text-muted-foreground">Audio File</p>
             </div>
-            <audio 
-              controls 
-              className="w-full max-w-md"
-              src={attachmentUrl}
-              preload="metadata"
-            >
-              Your browser does not support the audio tag.
-            </audio>
+            <div className="w-full max-w-md">
+              <audio 
+                controls 
+                className="w-full"
+                src={attachmentUrl}
+                preload="metadata"
+              >
+                Your browser does not support the audio tag.
+              </audio>
+            </div>
           </div>
         );
       
       case 'text':
         return (
-          <div className="h-[calc(100vh-120px)] sm:h-[calc(70vh-120px)]">
+          <div className="h-[calc(100vh-80px)] sm:h-[calc(70vh-120px)]">
             <iframe 
               src={attachmentUrl}
               className="w-full h-full rounded-md border border-border bg-background"
@@ -358,7 +424,7 @@ export function AttachmentViewer({
       
       case 'document':
         return (
-          <div className="h-[calc(100vh-120px)] sm:h-[calc(75vh-120px)]">
+          <div className="h-[calc(100vh-80px)] sm:h-[calc(75vh-120px)]">
             <iframe 
               src={attachmentUrl}
               className="w-full h-full rounded-md border border-border"
@@ -369,12 +435,14 @@ export function AttachmentViewer({
       
       default:
         return (
-          <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center space-y-4 sm:space-y-6 px-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center py-8 sm:py-16 text-center space-y-3 sm:space-y-6 px-4 min-h-[200px]">
+            <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center">
               {getFileIcon()}
             </div>
-            <div className="space-y-2">
-              <h3 className="font-medium text-sm sm:text-base hyphens-auto">{fileInfo.name}</h3>
+            <div className="space-y-2 max-w-full">
+              <h3 className="font-medium text-sm sm:text-base hyphens-auto px-2 break-all">
+                {fileInfo.name}
+              </h3>
               <p className="text-sm text-muted-foreground">
                 Preview not available for this file type
               </p>
