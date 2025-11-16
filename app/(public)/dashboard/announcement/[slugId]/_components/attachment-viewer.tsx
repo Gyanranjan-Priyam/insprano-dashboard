@@ -46,7 +46,7 @@ function CustomDialog({ isOpen, onClose, children, className }: CustomDialogProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-200"
@@ -59,7 +59,8 @@ function CustomDialog({ isOpen, onClose, children, className }: CustomDialogProp
         className={cn(
           "relative bg-background rounded-lg shadow-2xl border border-border",
           "animate-in fade-in-0 zoom-in-95 duration-200",
-          "flex flex-col",
+          "flex flex-col w-full h-full sm:w-auto sm:h-auto",
+          "max-w-screen max-h-screen sm:max-w-[95vw] sm:max-h-[95vh]",
           className
         )}
         role="dialog"
@@ -192,8 +193,8 @@ export function AttachmentViewer({
   };
 
   const getDialogSize = () => {
-    // Default size for unknown/loading files
-    const defaultSize = "w-[600px] max-w-[90vw]";
+    // Mobile-first approach - full width on mobile, responsive on desktop
+    const defaultSize = "w-full sm:w-[600px] sm:max-w-[90vw]";
     
     if (isLoading || error) {
       return defaultSize;
@@ -201,25 +202,25 @@ export function AttachmentViewer({
     
     switch (fileInfo.type) {
       case 'image':
-        return "w-auto max-w-[85vw] min-w-[500px]";
+        return "w-full sm:w-auto sm:max-w-[85vw] sm:min-w-[500px]";
       case 'pdf':
-        return "w-[900px] max-w-[95vw] min-w-[700px]";
+        return "w-full sm:w-[900px] sm:max-w-[95vw] sm:min-w-[700px]";
       case 'video':
-        return "w-[800px] max-w-[90vw] min-w-[600px]";
+        return "w-full sm:w-[800px] sm:max-w-[90vw] sm:min-w-[600px]";
       case 'audio':
-        return "w-[500px] max-w-[85vw] min-w-[400px]";
+        return "w-full sm:w-[500px] sm:max-w-[85vw] sm:min-w-[400px]";
       case 'text':
-        return "w-[700px] max-w-[88vw] min-w-[550px]";
+        return "w-full sm:w-[700px] sm:max-w-[88vw] sm:min-w-[550px]";
       case 'document':
-        return "w-[750px] max-w-[90vw] min-w-[600px]";
+        return "w-full sm:w-[750px] sm:max-w-[90vw] sm:min-w-[600px]";
       default:
         return defaultSize;
     }
   };
 
   const getDialogHeight = () => {
-    // Default height for unknown/loading files
-    const defaultHeight = "h-[400px] max-h-[80vh]";
+    // Mobile-first approach - full height on mobile, responsive on desktop
+    const defaultHeight = "h-full sm:h-[400px] sm:max-h-[80vh]";
     
     if (isLoading || error) {
       return defaultHeight;
@@ -227,17 +228,17 @@ export function AttachmentViewer({
     
     switch (fileInfo.type) {
       case 'image':
-        return "h-auto max-h-[85vh] min-h-[300px]";
+        return "h-full sm:h-auto sm:max-h-[85vh] sm:min-h-[300px]";
       case 'pdf':
-        return "h-[90vh] min-h-[600px]";
+        return "h-full sm:h-[90vh] sm:min-h-[600px]";
       case 'video':
-        return "h-auto max-h-[80vh] min-h-[400px]";
+        return "h-full sm:h-auto sm:max-h-[80vh] sm:min-h-[400px]";
       case 'audio':
-        return "h-[300px] max-h-[50vh]";
+        return "h-full sm:h-[300px] sm:max-h-[50vh]";
       case 'text':
-        return "h-[70vh] max-h-[80vh] min-h-[500px]";
+        return "h-full sm:h-[70vh] sm:max-h-[80vh] sm:min-h-[500px]";
       case 'document':
-        return "h-[75vh] max-h-[85vh] min-h-[550px]";
+        return "h-full sm:h-[75vh] sm:max-h-[85vh] sm:min-h-[550px]";
       default:
         return defaultHeight;
     }
@@ -288,11 +289,11 @@ export function AttachmentViewer({
     switch (fileInfo.type) {
       case 'image':
         return (
-          <div className="flex justify-center items-center min-h-[200px]">
+          <div className="flex justify-center items-center min-h-[200px] p-2 sm:p-0">
             <img 
               src={attachmentUrl} 
               alt={fileInfo.name}
-              className="max-w-full max-h-[calc(85vh-120px)] object-contain rounded-md shadow-sm"
+              className="max-w-full max-h-[calc(100vh-120px)] sm:max-h-[calc(85vh-120px)] object-contain rounded-md shadow-sm"
               onError={() => setError('Failed to load image')}
             />
           </div>
@@ -300,7 +301,7 @@ export function AttachmentViewer({
       
       case 'pdf':
         return (
-          <div className="h-[calc(90vh-120px)]">
+          <div className="h-[calc(100vh-120px)] sm:h-[calc(90vh-120px)]">
             <iframe 
               src={attachmentUrl}
               className="w-full h-full rounded-md border border-border"
@@ -311,10 +312,10 @@ export function AttachmentViewer({
       
       case 'video':
         return (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center p-2 sm:p-0">
             <video 
               controls 
-              className="w-full max-h-[calc(80vh-120px)] rounded-md shadow-sm"
+              className="w-full max-h-[calc(100vh-120px)] sm:max-h-[calc(80vh-120px)] rounded-md shadow-sm"
               src={attachmentUrl}
               preload="metadata"
             >
@@ -325,12 +326,12 @@ export function AttachmentViewer({
       
       case 'audio':
         return (
-          <div className="flex flex-col items-center justify-center py-12 space-y-6">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <FileAudio className="w-8 h-8 text-primary" />
+          <div className="flex flex-col items-center justify-center py-8 sm:py-12 space-y-4 sm:space-y-6 px-4">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center">
+              <FileAudio className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
             </div>
             <div className="text-center space-y-2">
-              <h3 className="font-medium text-sm">{fileInfo.name}</h3>
+              <h3 className="font-medium text-sm hyphens-auto">{fileInfo.name}</h3>
               <p className="text-xs text-muted-foreground">Audio File</p>
             </div>
             <audio 
@@ -346,7 +347,7 @@ export function AttachmentViewer({
       
       case 'text':
         return (
-          <div className="h-[calc(70vh-120px)]">
+          <div className="h-[calc(100vh-120px)] sm:h-[calc(70vh-120px)]">
             <iframe 
               src={attachmentUrl}
               className="w-full h-full rounded-md border border-border bg-background"
@@ -357,7 +358,7 @@ export function AttachmentViewer({
       
       case 'document':
         return (
-          <div className="h-[calc(75vh-120px)]">
+          <div className="h-[calc(100vh-120px)] sm:h-[calc(75vh-120px)]">
             <iframe 
               src={attachmentUrl}
               className="w-full h-full rounded-md border border-border"
@@ -368,12 +369,12 @@ export function AttachmentViewer({
       
       default:
         return (
-          <div className="flex flex-col items-center justify-center py-16 text-center space-y-6">
-            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center py-12 sm:py-16 text-center space-y-4 sm:space-y-6 px-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center">
               {getFileIcon()}
             </div>
             <div className="space-y-2">
-              <h3 className="font-medium">{fileInfo.name}</h3>
+              <h3 className="font-medium text-sm sm:text-base hyphens-auto">{fileInfo.name}</h3>
               <p className="text-sm text-muted-foreground">
                 Preview not available for this file type
               </p>
@@ -403,20 +404,20 @@ export function AttachmentViewer({
       onClose={onClose}
       className={`${getDialogSize()} ${getDialogHeight()} overflow-hidden`}
     >
-      <DialogHeader className="px-4 sm:px-6 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
+      <DialogHeader className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b bg-background/95 backdrop-blur-sm shrink-0">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {getFileIcon()}
             <DialogTitle className="text-sm sm:text-base font-semibold truncate">
               {fileInfo.name || (isLoading ? 'Loading...' : 'Attachment')}
             </DialogTitle>
             {fileInfo.extension && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="secondary" className="text-xs shrink-0">
                 {fileInfo.extension}
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {attachmentUrl && !isLoading && (
               <a 
                 href={attachmentUrl} 
@@ -424,13 +425,13 @@ export function AttachmentViewer({
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                <Button size="sm" variant="outline" className="gap-2">
+                <Button size="sm" variant="outline" className="gap-1 sm:gap-2 h-8 px-2 sm:px-3">
                   <Download className="h-4 w-4" />
                   <span className="hidden sm:inline">Download</span>
                 </Button>
               </a>
             )}
-            <Button onClick={onClose} variant="ghost" size="sm">
+            <Button onClick={onClose} variant="ghost" size="sm" className="h-8 w-8 p-0 sm:w-auto sm:px-2">
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
             </Button>
@@ -438,7 +439,7 @@ export function AttachmentViewer({
         </div>
       </DialogHeader>
       
-      <DialogContent className="p-4 sm:p-6">
+      <DialogContent className="p-3 sm:p-4 md:p-6 overflow-auto">
         {renderAttachmentContent()}
       </DialogContent>
     </CustomDialog>
