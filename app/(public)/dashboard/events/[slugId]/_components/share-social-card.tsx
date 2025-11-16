@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { FaWhatsapp } from "react-icons/fa";
+import { createPromotionalMessage, createEmailMessage, EMAIL_SUBJECT } from "@/lib/promotional-message";
 
 interface ShareSocialCardProps {
   title: string;
@@ -20,20 +21,20 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
 
   // Social sharing functions
   const shareToWhatsApp = () => {
-    const message = `🎉 Check out this event: ${title}\n\n${url}`;
+    const message = createPromotionalMessage(url);
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const shareToEmail = () => {
-    const subject = `Event Invitation: ${title}`;
-    const body = `Hi,\n\nI wanted to share this exciting event with you:\n\n${title}\n${description}\n\nEvent Details: ${url}\n\nHope to see you there!\n\nBest regards`;
+    const subject = EMAIL_SUBJECT;
+    const body = createEmailMessage(url);
     const emailUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(emailUrl);
   };
 
   const shareToTwitter = () => {
-    const message = `🎉 Excited to share: ${title}\n\n${url}`;
+    const message = createPromotionalMessage(url);
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
     window.open(twitterUrl, '_blank');
   };
@@ -45,18 +46,24 @@ export function ShareSocialCard({ title, description, url }: ShareSocialCardProp
 
   const shareToInstagram = () => {
     // Instagram doesn't have direct URL sharing, so we copy to clipboard with instructions
-    copyToClipboard();
-    toast.info("Link copied! You can paste this in your Instagram story or bio.");
+    const instagramMessage = createPromotionalMessage(url);
+    
+    navigator.clipboard.writeText(instagramMessage).then(() => {
+      toast.success("INSPRANO promotional message copied! Paste it in your Instagram story or bio.");
+    }).catch(() => {
+      toast.error("Failed to copy message");
+    });
   };
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(url);
+      const fullMessage = createPromotionalMessage(url);
+      await navigator.clipboard.writeText(fullMessage);
       setCopied(true);
-      toast.success("Event link copied to clipboard!");
+      toast.success("Complete INSPRANO promotional message copied to clipboard!");
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      toast.error("Failed to copy link");
+      toast.error("Failed to copy message");
       console.error('Failed to copy: ', err);
     }
   };
