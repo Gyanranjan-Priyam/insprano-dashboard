@@ -28,7 +28,7 @@ export function LoginForm() {
                 callbackURL: "/auth/callback",
                 fetchOptions: {
                     onSuccess: () => {
-                        toast.success("Successfully signed in with Github!");
+                        toast.success("Redirecting for signed in with Github!");
                     },
                     onError: () => {
                         toast.error("Internal Server Error");
@@ -44,7 +44,7 @@ export function LoginForm() {
                 callbackURL: "/auth/callback",
                 fetchOptions: {
                     onSuccess: () => {
-                        toast.success("Successfully signed in with Google!");
+                        toast.success("Redirecting for signed in with Google!");
                     },
                     onError: () => {
                         toast.error("Internal Server Error");
@@ -60,7 +60,7 @@ export function LoginForm() {
                 callbackURL: "/auth/callback",
                 fetchOptions: {
                     onSuccess: () => {
-                        toast.success("Successfully signed in with Github!");
+                        toast.success("Redirecting for signed in with Discord!");
                     },
                     onError: () => {
                         toast.error("Internal Server Error");
